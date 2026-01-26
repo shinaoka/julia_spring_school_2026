@@ -1,0 +1,13 @@
+name = "FunctionsDispatch"
+uuid = "2f73fddd-1910-42e5-878b-3b5ea86c26d3"
+version = "0.1.0"
+
+[extras]
+Test = "8dfed614-e22c-5e08-85e1-65c5234f0b40"
+
+[targets]
+test = ["Test"]
+
+[compat]
+julia = "1.10"
+

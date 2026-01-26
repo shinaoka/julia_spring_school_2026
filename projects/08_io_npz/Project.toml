@@ -1,0 +1,16 @@
+name = "IONPZ"
+uuid = "1e8cd583-48c7-4ec7-bbb5-305a1f8582ee"
+version = "0.1.0"
+
+[deps]
+NPZ = "15e1cf62-19b3-5cfa-8e77-841668bca605"
+
+[extras]
+Test = "8dfed614-e22c-5e08-85e1-65c5234f0b40"
+
+[targets]
+test = ["Test"]
+
+[compat]
+julia = "1.10"
+

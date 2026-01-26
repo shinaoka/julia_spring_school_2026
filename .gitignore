@@ -1,0 +1,12 @@
+.DS_Store
+
+# Julia
+**/Manifest.toml
+
+# Outputs / scratch
+**/*.npy
+**/*.npz
+**/*.png
+**/*.bin
+**/*.log
+**/tmp.*
