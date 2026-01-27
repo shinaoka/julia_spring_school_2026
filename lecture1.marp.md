@@ -59,14 +59,18 @@ paginate: true
 
 最近のAIコーディングエージェントの発展は素晴らしいので, その利用を前提に進めます.
 
+AIエージェントを操るのに十分な基礎知識を身につけることが目標. 自分で今後成長していけるように.
+
 --- 
 
 ## 目次: lecture 1
 
 - 型とはなにか？動的型づけとは？ (C++との比較)
+- 抽象型 / 具体型 / 型階層
+- 構造体 / parametric type
+- mutable / immutable / reference / GC
 - 関数とはなにか？多重ディスパッチとは？
 - JuliaのJITコンパイル
-- 構造体とはなにか？
 
 ---
 
@@ -95,6 +99,36 @@ y = 1.0 + 2.0im # InexactError（Float64へ変換できない）
 柔軟な記述と静的型付けのメリットの両立
 
 ---
+## 抽象型と具体型
+
+- **具体型（concrete type）**：実体（値）を持てる型（例：`Int64`, `Float64`, `Vector{Float64}`）
+- **抽象型（abstract type）**：分類ラベル（値そのものは作れない）（例：`Number`, `Real`, `AbstractFloat`）
+- Juliaの「継承」＝ **部分型関係**（`<:`）  
+  - `Any` は **全ての型のスーパータイプ**（一番上）
+
+```julia
+isabstracttype(Number)   # true
+isconcretetype(Float64)  # true
+typeof(1.0)              # Float64
+```
+
+---
+
+## 代表的な型階層（例）
+
+```text
+Any
+└─ Number
+   └─ Real
+      └─ AbstractFloat
+         └─ Float64
+```
+
+ポイント：
+- 自作型で「分類」を作るときは `abstract type` を使う（`struct` は通常その下に置く）
+
+---
+
 ## 構造体とはなにか？
 
 - 名前のある「型」を自分で作る仕組み
@@ -107,14 +141,104 @@ y = 1.0 + 2.0im # InexactError（Float64へ変換できない）
 
 ```julia
 struct Square
-    a::Float64  # 辺の長さ
+    side_length::Float64  # 辺の長さ
 end
 
-s = Square(2.0)
-s.a  # 2.0
+struct Circle
+    radius::Float64       # 半径
+end
+
+Square(2.0).side_length  # 2.0
+Circle(1.0).radius       # 1.0
 ```
 
 ポイント：**データの塊に名前と型を与える**（設計が明確に、最適化もしやすく）。
+
+---
+
+## Parametric type（パラメトリック型）
+
+- `Vector{Float64}` の `{Float64}` のように、**型にパラメータ**を持たせられる
+- 目的：**実装の重複を防ぎつつ**、要素型などの情報を型に埋め込む → 速いコードになりやすい
+- `SquareGeneric{Float64}` と `SquareGeneric{Int64}` は **別の具体型（別の型）**
+
+```julia
+struct SquareGeneric{T<:Real}
+    side_length::T
+end
+
+SquareGeneric(2.0)    # SquareGeneric{Float64}
+SquareGeneric(2)      # SquareGeneric{Int64}
+```
+
+---
+
+## Immutable, Mutable
+
+- Juliaでは **型（type）自体**に「mutable / immutable」の違いがある
+- `struct` はデフォルトで **immutable（不変）な型**を定義
+  - フィールドの更新（例：`p.x = ...`）は不可
+- `mutable struct` は **mutable（可変）な型**を定義
+  - フィールドの更新が可能
+- `Array` は mutable（`a[i] = ...` ができる）
+
+```julia
+ismutabletype(Int64)       # false
+ismutabletype(Float64)     # false
+ismutabletype(Vector{Int}) # true
+```
+
+---
+
+## Immutable / Mutable（最小例）
+
+```julia
+struct Point
+    x::Float64
+    y::Float64
+end
+
+mutable struct MPoint
+    x::Float64
+    y::Float64
+end
+
+p = Point(1.0, 2.0)   # p.x = 3.0 はエラー
+mp = MPoint(1.0, 2.0) # mp.x = 3.0 はOK
+```
+
+---
+
+## Reference（参照）と aliasing（共有）
+
+```julia
+# mutableの例（配列：共有される）
+a = [1, 2, 3]
+b = a          # 参照のコピー（同じ配列を指す）
+b[1] = 99
+a              # [99, 2, 3] になる
+
+c = a
+c = [0]        # 変数cの付け替え（aは変わらない）
+
+# immutableの例（値：共有されない）
+x = 1
+y = x
+y = 2
+x              # 1
+```
+
+---
+
+## Stack / Heap / GC（直感）
+
+- **stack（スタック）**：関数呼び出し中の「一時置き場」（関数が終わるとまとめて片付くイメージ）
+- **heap（ヒープ）**：長く生きるデータの置き場（手動で片付けないと溜まるイメージ）
+- Juliaでは **どこに置かれるか（stack/heap）は原則コンパイラが決める**（ユーザが直接は制御しない）
+- ざっくり：
+  - 小さな immutable（isbits）は **値として扱われやすい**
+  - mutable（Arrayなど）は **参照として扱われやすい** → GCの対象になりやすい
+- **GC（garbage collection）**：参照されなくなったオブジェクトのメモリを自動回収（手動 `free` 不要）
 
 ---
 
@@ -129,11 +253,13 @@ s.a  # 2.0
 ## 多重ディスパッチ（人為的な最小例）
 
 ```julia
-f(x) = x          # 汎用（fallback）
-f(x::Int) = x + 1
+f(x) = x                # 汎用（fallback）
+f(x::Real) = x + 1      # 抽象型で定義してOK
+f(x::Int) = x + 1       # より具体型（同じ意味のまま上書きもできる）
 
 f(1)      # 2
-f(1.0)    # 1.0（汎用）
+f(1.0)    # 2.0（Real）
+f("a")    # "a"（fallback）
 ```
 
 ---
@@ -141,12 +267,8 @@ f(1.0)    # 1.0（汎用）
 ## 多重ディスパッチ（最小例）
 
 ```julia
-struct Circle
-    r::Float64
-end
-
-area(s::Square) = s.a^2
-area(c::Circle) = π * c.r^2
+area(s::Square) = s.side_length^2
+area(c::Circle) = π * c.radius^2
 
 area(Square(2.0))  # 4.0
 area(Circle(1.0))  # 3.1415...
@@ -158,14 +280,14 @@ area(Circle(1.0))  # 3.1415...
 
 - 最初の呼び出しで **コンパイル**（遅い）
 - コンパイル単位：**メソッド × 実引数の型**（specialization）
-  - 型注釈の有無に関係なく、**実際に渡された値の型**で決まる
+  - 型注釈の有無に関係なく、**実際に渡された“具体型”**で決まる
+  - 引数型に `x::Real` のような **抽象型**を指定すること自体は可能（ただし実行時は具体型でspecializeされる）
 - 同じ「メソッド×型」なら、2回目以降は **キャッシュ済み**（速い）
 - TTFX: Time To First Execution (最初の呼出し時のコンパイルによる待ち時間)
 
 <small>
-（補足）Julia 1.9以降：パッケージ事前コンパイルで **ネイティブコードも保存（pkgimage）** → 次回以降のセッションで再利用（TTFX短縮）  
-（補足）Julia 1.10以降：pkgimageの生成/ロード等が改良され、さらに待ち時間が減る場合がある  
-（注意）通常の実行中に“その場で”JITされたコードは、基本そのセッション限り（永続化したいなら sysimage）
+（補足）Julia 1.9以降：事前コンパイルで **ネイティブコードも保存（pkgimage）** → 次回以降が速い  
+（注意）通常の実行中にJITされた分は基本セッション限り（永続化したいなら sysimage）
 </small>
 
 ---
@@ -178,25 +300,41 @@ area(Circle(1.0))  # 3.1415...
 （→ `projects/01_linalg_bench/`, `projects/02_broadcast_bench/` で体験）
 
 ---
-
-## 構造体とはなにか？（データのまとまり）
-
-- 名前のある「型」を自分で作る仕組み
-- フィールド（属性）をまとめ、意味を持たせる
-- 型がはっきりすると、コードも速く・安全に
-
----
-
-## 構造体（最小例）
+## よく使う構造体の例: Array
 
 ```julia
-struct Particle
-    x::Float64
-    v::Float64
-end
+a = [1, 2, 3]
+a[1] = 4
+a # Array{Int64,1} / Vector{Int64}
 
-p = Particle(0.0, 1.0)
+A = [1 2; 3 4]   # 2x2行列
+A[1, 2]          # 2
+A[2, 1] = 30
+A # Array{Int64,2} / Matrix{Int64}
 ```
+
+配列の添字は1-basedであることに注意.
+配列のElementの型は, 最初に決まったら変更できない.
+
+---
+## 配列のElementの型
+
+高速な計算のために, 配列のElementの型はInt64, Float64, Bool, Charなどの基本的な型にするのが望ましい.
+
+Array{Any}になる例
+
+```julia
+v = [1.0, 1]      # Vector{Float64}（数値は昇格して揃う）
+eltype(v)         # Float64
+
+w = [1.0, "a"]    # Vector{Any}（揃えられないとAny）
+eltype(w)         # Any
+```
+
+---
+## ここからハンズオン（Projectと計測）
+
+以降は `projects/` を動かしながら進めます。
 
 ---
 
