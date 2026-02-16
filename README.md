@@ -46,3 +46,5 @@ Jin-Guo Liu の SCFP と同様に、`shiroa` を使って Typst から HTML を�
 
 GitHub Pages へのデプロイは GitHub Actions（`.github/workflows/pages.yml`）で行います。
 
+- 公開URL: https://shinaoka.github.io/julia_spring_school_2026/
+
