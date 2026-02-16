@@ -1,13 +1,11 @@
 ## 計算物理 春の学校 2026 — Julia入門
 
-GitHubでそのまま読める講義ノート（Markdown）と、手を動かすためのサンプルコード（トピック別のJulia Project環境）をまとめたリポジトリです。
+Typst で書いた講義ノートを shiroa で HTML 化して公開するリポジトリです（章立ては題材ベース）。
 
 ### 目次
 
-- [Overview: Juliaとは何か](overview.md)
-- [講義1: 基本 + ベンチ（BenchmarkTools/FLOPs）](lecture1.md)
-- [講義2: Project/テスト/Revise/NPZ/Plots + VS Code Notebook](lecture2.md)
-- [講義3: 最適化（GC/alloc）](lecture3.md)
+- 公開用 HTML は GitHub Pages（GitHub Actions）でデプロイします
+- ローカルでは `make serve` / `make build` で確認できます
 
 ### 取得方法
 
@@ -19,33 +17,6 @@ cd julia_spring_school_2026
 ```
 
 - **ZIP**: GitHubの「Code」→「Download ZIP」
-
-### サンプルの実行（共通テンプレ）
-
-各トピックは `projects/NN_xxx/` が独立したProject環境です。
-
-REPLから:
-
-```julia
-using Pkg
-Pkg.activate("projects/01_linalg_bench")
-Pkg.instantiate()
-Pkg.test()
-```
-
-スクリプト実行（カレントが`projects/NN_xxx/`の想定）:
-
-```bash
-cd projects/01_linalg_bench
-julia --project=. examples/01_run.jl
-```
-
-### VS Code + Project環境（重要）
-
-- **原則**: VS Codeは「開いているフォルダ（ワークスペース）」を基準にProject環境を扱います。
-  - `projects/01_linalg_bench/` を開けば、そのProjectが前提になります。
-- **注意**: `projects/`を開いたままサブディレクトリのコードを触ると、意図したProjectになっていないことがあります。
-  - ステータスバー等で **アクティブなProject** を確認し、必要なら選び直してください。
 
 ### Notebook（標準: `.ipynb`）
 
@@ -65,4 +36,13 @@ Pkg.build("IJulia")
 ### 旧資料
 
 - 以前のファイルは `legacy/` に退避しています。
+
+### Typst → HTML（公開用）
+
+Jin-Guo Liu の SCFP と同様に、`shiroa` を使って Typst から HTML を生成できます。
+
+- ローカルプレビュー: `make serve`
+- ビルド: `make build`
+
+GitHub Pages へのデプロイは GitHub Actions（`.github/workflows/pages.yml`）で行います。
 

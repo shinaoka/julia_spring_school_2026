@@ -1,0 +1,9 @@
+project:
+  type: default
+
+format:
+  revealjs:
+    slide-number: true
+    center: false
+    transition: none
+

@@ -10,3 +10,7 @@
 **/*.bin
 **/*.log
 **/tmp.*
+
+# Typst / shiroa (HTML build output)
+book/dist/
+book/.shiroa/
