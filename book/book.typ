@@ -19,9 +19,6 @@
     #chapter("topics/abstraction.typ")[Julia の抽象化を読めるように]
     #chapter("topics/performance.typ")[性能評価と改善サイクル]
     #chapter("topics/package-dev.typ")[発展課題：パッケージとは？作り方は？]
-
-    = 参考（旧）
-    #chapter("lectures/lecture1-outline.typ")[講義回アウトライン（旧）]
   ],
 )
 

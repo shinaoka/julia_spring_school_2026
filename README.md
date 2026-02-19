@@ -32,19 +32,3 @@ Pkg.build("IJulia")
 
 - `juliaup`でJuliaを更新したら、もう一度 `Pkg.build("IJulia")` を実行してください。
   - 参考: `https://julialang.github.io/IJulia.jl/stable/manual/installation/`
-
-### 旧資料
-
-- 以前のファイルは `legacy/` に退避しています。
-
-### Typst → HTML（公開用）
-
-Jin-Guo Liu の SCFP と同様に、`shiroa` を使って Typst から HTML を生成できます。
-
-- ローカルプレビュー: `make serve`
-- ビルド: `make build`
-
-GitHub Pages へのデプロイは GitHub Actions（`.github/workflows/pages.yml`）で行います。
-
-- 公開URL: https://shinaoka.github.io/julia_spring_school_2026/
-
