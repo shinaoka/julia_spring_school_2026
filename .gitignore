@@ -14,3 +14,6 @@
 # Typst / shiroa (HTML build output)
 book/dist/
 book/.shiroa/
+
+# Local reference repos
+extern/
