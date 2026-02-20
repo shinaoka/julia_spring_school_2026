@@ -116,10 +116,38 @@ julia --project=. -e 'using Pkg; Pkg.instantiate(); Pkg.test()'
 - 「docstring を付けて、`?estimate_pi` でヘルプが出るようにして」
 - 「GitHub Actions で `Pkg.test()` を自動実行する CI を追加して」
 
+== もう一つの例：TwoDimIsingSolver
+
+イジング模型の演習で作ったコードもパッケージにできる。`MonteCarloPi` と比較すると：
+
+- *MonteCarloPi*：関数 1 つのシンプルなパッケージ
+- *TwoDimIsingSolver*：複数の関数 + 構造体（`Accumulator`）を含むパッケージ
+
+=== LLM への依頼例
+
+```
+イジング模型の Metropolis 法コード（metropolis_step!、magnetization、
+run_ising、Accumulator）を TwoDimIsingSolver パッケージにして。
+
+- src/TwoDimIsingSolver.jl に module を定義
+- export する関数：run_ising, magnetization, Accumulator
+- test/runtests.jl にテスト：
+  - 低温（β=0.6）で ⟨M²⟩ > 0.8
+  - 高温（β=0.2）で ⟨M²⟩ < 0.3
+- Pkg.test() が通るところまで
+```
+
+=== ポイント
+
+- パッケージが大きくなると `src/` 内を複数ファイルに分割する（`include` で読み込む）
+- `export` で公開 API を選ぶ：内部のヘルパー関数は export しなくてよい
+- テストでは物理的に妥当な結果（相転移の存在）を検証する
+
 == ここまでできたら合格（チェックリスト）
 
 - `pkg> activate .` した環境で `using MonteCarloPi` が通る
 - `pkg> test` が通る
+- （発展）`TwoDimIsingSolver` も同様にパッケージ化・テスト通過できた
 - 変更を commit して push できる
 
 == 発展：CI でテストを自動実行する

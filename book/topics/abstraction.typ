@@ -105,6 +105,79 @@ typeof("hello")  # String
 typeof([1,2,3])  # Vector{Int64}
 ```
 
+=== 構造体（`struct`）
+
+Julia で自分の型を作るには `struct` を使う。LLM が生成するコードにもよく出てくる。
+
+```julia
+struct Point2D
+    x::Float64
+    y::Float64
+end
+
+p = Point2D(1.0, 2.0)
+p.x  # => 1.0
+p.y  # => 2.0
+```
+
+- `struct` は *イミュータブル*（フィールドを後から変更できない）
+- 変更可能にしたい場合は `mutable struct` を使う
+
+```julia
+mutable struct Counter
+    n::Int
+end
+
+c = Counter(0)
+c.n += 1   # OK（mutable なので変更できる）
+```
+
+=== 型の階層構造
+
+Julia の型はツリー構造になっている。`abstract type` で「分類」を、`struct` で「具体的なデータ」を定義する。
+
+```julia
+abstract type Shape end
+
+struct Circle <: Shape
+    radius::Float64
+end
+
+struct Rectangle <: Shape
+    width::Float64
+    height::Float64
+end
+```
+
+- `<:` は「〜のサブタイプ」を意味する
+- `Circle` と `Rectangle` はどちらも `Shape` の具体型
+- `supertype(Circle)` で親の型を確認できる
+
+```julia
+Circle(1.0) isa Shape      # true
+Rectangle(2.0, 3.0) isa Shape  # true
+```
+
+=== 型階層と多重ディスパッチの組み合わせ
+
+型階層を定義しておくと、共通の振る舞いと個別の振る舞いを分けられる：
+
+```julia
+# Shape 共通のメソッド（抽象型に対して定義）
+describe(s::Shape) = println("これは図形です")
+
+# 個別のメソッド（具体型に対して定義）
+area(c::Circle) = π * c.radius^2
+area(r::Rectangle) = r.width * r.height
+```
+
+```julia
+area(Circle(1.0))          # => 3.14159...
+area(Rectangle(2.0, 3.0))  # => 6.0
+```
+
+これが Julia の多重ディスパッチの基本パターン。LLM が生成するコードでも `abstract type` + `struct <:` + メソッド定義の組み合わせはよく出てくる。
+
 === 関数 = メソッドの集合
 
 Julia では同じ名前の関数に、引数の型ごとに異なる「メソッド」を定義できる。これが*多重ディスパッチ*。

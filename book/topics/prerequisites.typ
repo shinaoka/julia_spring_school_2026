@@ -45,11 +45,30 @@ julia --version
   - VS Code: https://code.visualstudio.com/
   - Julia 拡張（Julia Language Support）: https://marketplace.visualstudio.com/items?itemName=julialang.language-julia
 
+- GitHub Copilot の設定（学生は無料で Pro が使える）
+  + *事前準備*（申請前に済ませておくこと）：
+    - 大学発行のメールアドレスを GitHub アカウントに追加し、*Verified* 状態にする
+    - GitHub の *2段階認証（2FA）* を有効化する（Settings → Password and authentication）
+    - GitHub プロフィールの名前をアルファベット表記にしておく
+  + *GitHub Education に申請*：https://education.github.com/ → Student Developer Pack を申請
+    - 学生証の写真をアップロードする（大学によっては英訳が必要な場合あり）
+    - 承認まで約 3 日（72 時間）かかるので *早めに申請* すること
+  + *承認後の設定*：「GitHub Educationにようこそ」メールが届いたら https://github.com/settings/copilot/features で Copilot を有効化する
+  + *VS Code で Copilot 拡張をインストール*：GitHub Copilot 拡張と GitHub Copilot Chat 拡張の 2 つを入れる
+  + 注意：承認前に Copilot 拡張をインストールするとフリープランの使用上限に達することがある。*承認完了後にインストール* するのが安全
+  - 参考記事：
+    - https://qiita.com/melonsode/items/3602ea6441ca82e43c5a
+    - https://zenn.dev/kazu_9626/articles/1e8b48491233e8
+
 - 講義で使うパッケージの事前インストール（会場の回線が細いため）
 
 ```sh
-julia -e 'using Pkg; Pkg.add("BenchmarkTools")'
+julia -e 'using Pkg; Pkg.add(["BenchmarkTools", "Plots", "Statistics"])'
 ```
+
+  - `BenchmarkTools`：性能評価で使用
+  - `Plots`：グラフ描画（VS Code の Julia 拡張でプロットパネルに表示される）
+  - `Statistics`：`mean`、`std` など基本統計量
 
 == この講義で目指すこと
 
