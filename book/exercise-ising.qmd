@@ -1,0 +1,330 @@
+---
+title: "発展演習：2次元イジング模型のモンテカルロ法"
+---
+
+講義で到達しなくても構わない。π 推定で学んだモンテカルロ法と Accumulator を、物理の問題に応用する発展課題である。
+
+## 背景：イジング模型と相転移
+
+### ハミルトニアン
+
+2次元強磁性イジング模型のハミルトニアンは
+
+$$
+H = -J \sum_{\langle i, j \rangle} S_i S_j
+$$
+
+で定義される。ここで：
+
+- $S_i = \pm 1$：格子点 $i$ 上のスピン変数
+- $J > 0$：強磁性結合定数（隣り合うスピンが揃うとエネルギーが下がる）
+- $\sum_{\langle i, j \rangle}$：最近接ペアの和（2D 正方格子では各スピンに 4 つの最近接サイト）
+
+以下では $J = 1$ とする（エネルギーの単位を $J$ にとる）。
+
+### 周期境界条件
+
+有限サイズ `L × L` の格子をシミュレーションするとき、端のスピンにも 4 つの近接サイトを持たせるために **周期境界条件** を用いる。格子の右端と左端、上端と下端がつながっている（トーラスの形）。
+
+Julia では `mod1(i, L)` が便利：`mod1(L+1, L) = 1`、`mod1(0, L) = L` となるので、1-indexed の周期境界条件をそのまま書ける。
+
+### 相転移
+
+温度を変えると **相転移** が起きる：
+
+- **低温**：スピンが揃う（強磁性相）→ 磁化が大きい
+- **高温**：スピンがバラバラ（常磁性相）→ 磁化がほぼゼロ
+- **転移温度**（2D 正方格子）：$T_c = 2J / \ln(1+\sqrt{2}) \approx 2.269$（Onsager の厳密解）
+
+磁化の二乗平均 $\langle M^2 \rangle$ を温度の関数として計算すると、相転移が目に見える。
+
+## マルコフ連鎖モンテカルロ法（MCMC）
+
+前の演習（π 推定）では、乱数点を **独立に** 生成してサンプリングした。しかし、イジング模型のような多体系では、ボルツマン分布 $W(\Sigma) = Z^{-1} \exp(-\beta E(\Sigma))$ に従う配置を直接生成することは困難である。そこで **マルコフ連鎖モンテカルロ法（MCMC）** を使う。
+
+### 基本的な考え方
+
+MCMC では、状態の **時系列**（マルコフ連鎖）を構成する：
+
+1. 現在の状態 $\Sigma$ から、遷移確率 $T(\Sigma \to \Sigma')$ に従って次の状態 $\Sigma'$ を選ぶ
+2. これを繰り返すと、十分な時間の後に定常分布 $W(\Sigma)$ に収束する
+
+定常分布への収束には、以下の 2 つの条件が十分である：
+
+1. **エルゴード性**：任意の状態から任意の状態へ有限ステップで到達可能であること
+2. **詳細釣り合い条件**：
+
+$$
+T(\Sigma \to \Sigma') W(\Sigma) = T(\Sigma' \to \Sigma) W(\Sigma') \quad (\forall \Sigma, \Sigma')
+$$
+
+直観的には「$\Sigma \to \Sigma'$ に行く流れ」と「$\Sigma' \to \Sigma$ に戻る流れ」が等しいという条件である。詳細釣り合いは定常分布への収束の十分条件であり、必要条件ではないが、実用上はほとんどのアルゴリズムがこの条件を利用して設計されている。
+
+### メトロポリス法
+
+詳細釣り合いを満たす代表的なアルゴリズムが **メトロポリス法** である。手順は：
+
+1. スピンを 1 つランダムに選び、反転を **提案** する
+2. エネルギー変化 $\Delta E$ を計算する
+3. 受理確率 $\min(1, \exp(-\beta \Delta E))$ で提案を受理する：
+   - $\Delta E \leq 0$（エネルギーが下がる）→ 必ず受理
+   - $\Delta E > 0$（エネルギーが上がる）→ 確率 $\exp(-\beta \Delta E)$ で受理
+
+この規則が詳細釣り合いを満たすことは、$T(\Sigma \to \Sigma') / T(\Sigma' \to \Sigma) = \exp(-\beta (E(\Sigma') - E(\Sigma))) = W(\Sigma') / W(\Sigma)$ から確認できる。
+
+### π 推定との決定的な違い：自己相関
+
+π 推定では各サンプルが **独立** だったので、標準誤差は単純に $\sigma / \sqrt{N}$ で計算できた。
+
+MCMC では、連続する状態が **相関** している（前の配置を少し変えただけなので）。この相関の強さを **自己相関時間 $\tau$** と呼ぶ。
+
+- $\tau$ が大きい → 連続する測定値が似通っている → **実効的な独立サンプル数** が $N$ より大幅に少ない
+- 真の標準誤差 ≈ $\sigma / \sqrt{N / 2\tau}$（$\tau$ を無視すると標準誤差を **過小評価** してしまう）
+- 特に **転移温度付近** では $\tau$ が大きくなる（**臨界減速**）
+
+後の「発展：自己相関時間と binning」で、この問題を **binning 解析** で確認する。
+
+## 課題 1：LLM にイジング模型のコードを書かせる
+
+LLM に以下を依頼して、まず動くコードを手に入れよう。
+
+### LLM への依頼例
+
+```
+2次元正方格子の強磁性イジング模型を Metropolis 法でシミュレーションする
+Julia コードを書いて。
+
+- 格子サイズ L×L、周期境界条件
+- スピンは +1 / -1
+- 1 回の Monte Carlo ステップ = L² 回のスピン更新（ランダムに1つ選んで反転を試みる）
+- エネルギー変化 ΔE に基づく Metropolis 判定
+- 引数：格子サイズ L、逆温度 β、ステップ数 nsteps
+- 各ステップでの磁化 M = (全スピンの和) / L² を返す
+```
+
+### コードの構造（参考）
+
+LLM が生成するコードはおおよそこうなるはず：
+
+```julia
+function metropolis_step!(spins::Matrix{Int}, β::Float64)
+    L = size(spins, 1)
+    for _ in 1:L*L
+        i = rand(1:L)
+        j = rand(1:L)
+        # 最近接スピンの和（周期境界条件）
+        nn = spins[mod1(i+1,L), j] + spins[mod1(i-1,L), j] +
+             spins[i, mod1(j+1,L)] + spins[i, mod1(j-1,L)]
+        ΔE = 2 * spins[i,j] * nn
+        if ΔE <= 0 || rand() < exp(-β * ΔE)
+            spins[i,j] *= -1
+        end
+    end
+end
+
+function magnetization(spins::Matrix{Int})
+    return abs(sum(spins)) / length(spins)
+end
+```
+
+- `mod1(i, L)` は 1-indexed の周期境界条件で便利な関数
+- `ΔE` はスピンを反転したときのエネルギー変化
+
+### 読み解きのポイント
+
+- `spins::Matrix{Int}`：型注釈で 2 次元配列であることが明示されている
+- `spins[i,j] *= -1`：スピンの反転（+1 ↔ −1）
+- Metropolis 判定：`ΔE <= 0` なら必ず受理、`ΔE > 0` でも確率 `exp(-βΔE)` で受理
+
+## 課題 2：Accumulator で $\langle M^2 \rangle$ を計算する
+
+前の演習で作った `Accumulator` をここで再利用する。各ステップの磁化 $M$ に対して $M^2$ を蓄積し、平均と標準誤差を求めよう。
+
+```julia
+function run_ising(L::Int, β::Float64, nsteps::Int; nwarmup::Int=1000)
+    spins = rand([-1, 1], L, L)   # ランダム初期配置
+
+    # ウォームアップ（平衡化）
+    for _ in 1:nwarmup
+        metropolis_step!(spins, β)
+    end
+
+    # 測定
+    acc = Accumulator()
+    for _ in 1:nsteps
+        metropolis_step!(spins, β)
+        m = magnetization(spins)
+        push!(acc, m^2)   # M² を蓄積
+    end
+    return acc
+end
+```
+
+- **ウォームアップ**：初期配置の影響を消すために、最初の数ステップは測定しない
+- `push!(acc, m^2)`：Accumulator にそのまま `push!` できる
+
+### 実行してみよう
+
+```julia
+L = 16
+β = 0.5   # 高温（Tc より上、β < βc ≈ 0.4407）
+acc = run_ising(L, β, 10000)
+println("⟨M²⟩ = $(mean(acc)) ± $(stderr(acc))")
+```
+
+## 課題 3：温度を変えて相転移を観察する
+
+複数の温度（逆温度 $\beta$）で $\langle M^2 \rangle$ を計算し、相転移を観察しよう。
+
+```julia
+βs = 0.2:0.05:0.7   # βc ≈ 0.4407 を含む範囲
+L = 16
+
+for β in βs
+    acc = run_ising(L, β, 10000)
+    println("β=$β:  ⟨M²⟩ = $(mean(acc)) ± $(stderr(acc))")
+end
+```
+
+### 期待される振る舞い
+
+- $\beta < 0.44$（高温）：$\langle M^2 \rangle$ は小さい（スピンがバラバラ）
+- $\beta > 0.44$（低温）：$\langle M^2 \rangle$ は 1 に近づく（スピンが揃う）
+- $\beta \approx 0.44$ 付近：急激に変化する（相転移）
+
+### LLM への依頼例
+
+```
+β を変えて ⟨M²⟩ を計算した結果を
+Plots.jl でグラフにして。横軸を β、縦軸を ⟨M²⟩ にして、
+エラーバーも表示して。βc ≈ 0.4407 に縦線を入れて。
+```
+
+## 課題 4：1 MC step の計算時間はスピン数にどう依存する？
+
+1 Monte Carlo step（= 全スピンの更新を 1 回ずつ試行）の計算時間が、スピン数 `Nspin = L²` に対してどう依存するかを `@btime` で調べよう。
+
+```julia
+using BenchmarkTools
+
+for L in [8, 16, 32, 64, 128]
+    spins = rand([-1, 1], L, L)
+    β = 0.44
+    t = @belapsed metropolis_step!($spins, $β)
+    println("L=$L (Nspin=$(L^2)):  $t sec")
+end
+```
+
+### 考えてみよう
+
+- `L` を倍にすると計算時間はおよそ何倍になるか？
+- 1 回のスピン更新（近接 4 サイトの参照 + Metropolis 判定）の計算量は `L` に依存するか？
+- 以上から、1 MC step の計算時間は `Nspin` の何乗に比例するか？
+
+### 答え
+
+1 回のスピン更新は O(1)（近接サイトの数は常に 4）。1 MC step で `L²` 回試行するので、計算時間は **`Nspin` の 1 乗に比例**（線形）。`@btime` の結果もこれを裏付けるはずである。
+
+## 発展：自己相関時間と binning
+
+### なぜ binning が必要か
+
+上で説明したように、MCMC のサンプルには自己相関がある。課題 2 の `Accumulator` で計算した標準誤差は、各サンプルが独立であると仮定している。自己相関がある場合、この仮定は正しくなく、**標準誤差が過小評価** される。
+
+binning 解析は、この問題を解決するシンプルな方法である：
+
+1. 連続する $B$ ステップの測定値をまとめて 1 つの **ビン平均** を作る
+2. ビンサイズ $B$ が自己相関時間 $\tau$ より十分大きければ、ビン平均同士はほぼ **独立** になる
+3. 独立なビン平均に対して `Accumulator` を使えば、正しい標準誤差が得られる
+
+π 推定の binning との違いを整理しよう：
+
+| **項目** | **π 推定** | **MCMC（イジング）** |
+|---|---|---|
+| サンプルの独立性 | 各試行は独立 | 連続するステップは相関あり |
+| binning の目的 | 分散推定のため | **自己相関を除去** するため |
+| ビンサイズの影響 | 標準誤差はほぼ変わらない | 小さい → 過小評価、大きい → 飽和 |
+
+### binning の実装
+
+```julia
+function run_ising_binned(L::Int, β::Float64, nbins::Int, binsize::Int;
+                          nwarmup::Int=1000)
+    spins = rand([-1, 1], L, L)
+
+    for _ in 1:nwarmup
+        metropolis_step!(spins, β)
+    end
+
+    acc = Accumulator()
+    for _ in 1:nbins
+        # 1 ビン = binsize ステップの平均
+        bin_acc = Accumulator()
+        for _ in 1:binsize
+            metropolis_step!(spins, β)
+            m = magnetization(spins)
+            push!(bin_acc, m^2)
+        end
+        push!(acc, mean(bin_acc))   # ビン平均を蓄積
+    end
+    return acc
+end
+```
+
+```julia
+L = 16
+β = 0.44   # 転移温度付近（相関が最も強い）
+
+for binsize in [1, 10, 50, 100, 500]
+    acc = run_ising_binned(L, β, 1000, binsize)
+    println("binsize=$binsize:  stderr=$(stderr(acc))")
+end
+```
+
+### 期待される振る舞い
+
+- ビンサイズが小さい → 標準誤差が過小評価される（相関を無視しているため）
+- ビンサイズを大きくする → 標準誤差が増加して **飽和** する
+- 飽和したところが正しい標準誤差（ビンサイズ > 自己相関時間）
+
+### 考えてみよう
+
+- 高温（`β = 0.2`）と転移点付近（`β = 0.44`）で、飽和するビンサイズはどう違うか？
+- 転移点付近で自己相関が強くなるのはなぜか、LLM に聞いてみよう
+
+## 発展：TwoDimIsingSolver パッケージにする
+
+ここまでのコードが動いたら、パッケージ化に挑戦しよう。次の「パッケージとは？」トピックで扱う内容の実践になる。
+
+### LLM への依頼例
+
+```
+以下のイジング模型コード（metropolis_step!、magnetization、run_ising）を
+TwoDimIsingSolver パッケージにして。
+
+- src/TwoDimIsingSolver.jl に module を定義
+- Accumulator も同じモジュールに含める
+- test/runtests.jl に最小テスト：
+  - 低温（β=0.6）で ⟨M²⟩ > 0.8 になること
+  - 高温（β=0.2）で ⟨M²⟩ < 0.3 になること
+- Pkg.test() が通るところまで
+```
+
+### ディレクトリ構成
+
+```
+TwoDimIsingSolver/
+├── Project.toml
+├── src/
+│   └── TwoDimIsingSolver.jl
+└── test/
+    └── runtests.jl
+```
+
+## チェックリスト
+
+- Metropolis 法のイジング模型コードが動く
+- Accumulator で $\langle M^2 \rangle$ を計算できた
+- 温度を変えて相転移が観察できた
+- （発展）binning で自己相関の影響を確認できた
+- （発展）`TwoDimIsingSolver` パッケージにして `Pkg.test()` が通る

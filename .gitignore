@@ -11,8 +11,9 @@
 **/*.log
 **/tmp.*
 
-# Typst / shiroa (HTML build output)
+# Quarto / book build output
 book/dist/
+book/.quarto/
 book/.shiroa/
 
 # Local reference repos

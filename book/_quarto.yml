@@ -1,0 +1,25 @@
+project:
+  type: book
+  output-dir: dist
+
+book:
+  title: "計算物理 春の学校 2026 — Julia 入門"
+  author: "品岡 寛"
+  chapters:
+    - index.qmd
+    - prerequisites.qmd
+    - repo-setup.qmd
+    - pkg-environments.qmd
+    - abstraction.qmd
+    - performance.qmd
+    - exercise-binning.qmd
+    - exercise-ising.qmd
+    - package-dev.qmd
+
+format:
+  html:
+    theme: cosmo
+    lang: ja
+    toc: true
+    code-copy: true
+    code-overflow: wrap

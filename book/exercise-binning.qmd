@@ -1,0 +1,156 @@
+---
+title: "演習：binning で π の推定精度を評価する"
+---
+
+これまでに学んだ構造体・関数・多重ディスパッチを組み合わせて、Monte Carlo 推定の精度を定量的に評価する演習である。
+
+## 背景：1 回の推定だけでは不十分
+
+`estimate_pi(N)` を 1 回実行すると値は出るが、「どのくらい信頼できるか」が分からない。そこで **binning**（ビニング）を使う：
+
+1. 全体の試行数 `N` を `M` 個の **ビン** に分割する（各ビンのサイズ `B = N ÷ M`）
+2. 各ビンで独立に π を推定する
+3. ビンごとの推定値を蓄積して、**平均** と **標準誤差** を計算する
+
+## 課題 1：Accumulator 構造体を作る
+
+値を逐次追加して、平均と標準誤差を計算できる `Accumulator` を定義しよう。
+
+### ヒント
+
+```julia
+mutable struct Accumulator
+    n::Int          # 追加されたデータ数
+    sum::Float64    # 合計
+    sum_sq::Float64 # 二乗和
+end
+
+# コンストラクタ（空の状態で初期化）
+Accumulator() = Accumulator(0, 0.0, 0.0)
+```
+
+- `mutable struct` なのは、`push!` で値を追加するたびにフィールドを更新するため
+- `n`、`sum`、`sum_sq` の 3 つだけで平均と分散が計算できる
+
+### LLM への依頼例
+
+```
+値を逐次追加して平均と標準誤差を計算できる
+mutable struct Accumulator を Julia で定義して。
+フィールドは n（データ数）、sum（合計）、sum_sq（二乗和）。
+引数なしで空の Accumulator を作れるコンストラクタも定義して。
+```
+
+## 課題 2：Accumulator にメソッドを定義する
+
+`push!` で値を追加し、`mean` と `stderr` で統計量を取り出せるようにしよう。
+
+### ヒント
+
+```julia
+using Statistics
+
+# 値を追加する
+function Base.push!(acc::Accumulator, x::Float64)
+    acc.n += 1
+    acc.sum += x
+    acc.sum_sq += x^2
+    return acc
+end
+
+# 平均
+Statistics.mean(acc::Accumulator) = acc.sum / acc.n
+
+# 標準誤差（= 標準偏差 / √n）
+function stderr(acc::Accumulator)
+    var = acc.sum_sq / acc.n - mean(acc)^2  # 分散
+    return sqrt(var / acc.n)
+end
+```
+
+- `Base.push!` のように書くと、Julia の既存の `push!` 関数に自分の型用のメソッドを追加できる
+- これが多重ディスパッチの実践：同じ `push!` でも `Accumulator` を渡せば専用の処理が走る
+
+### LLM への依頼例
+
+```
+Accumulator に対して以下のメソッドを定義して：
+- Base.push!(acc, x)：値を追加
+- Statistics.mean(acc)：平均を返す
+- stderr(acc)：標準誤差を返す
+```
+
+## 課題 3：binning + Accumulator で π を推定する
+
+`Accumulator` を使って binning を実装しよう。
+
+```julia
+function estimate_pi_binning(N::Int, M::Int)
+    B = N ÷ M   # 各ビンのサイズ
+    acc = Accumulator()
+    for _ in 1:M
+        push!(acc, estimate_pi(B))
+    end
+    return acc
+end
+```
+
+実行してみよう：
+
+```julia
+N = 10_000_000
+acc = estimate_pi_binning(N, 100)
+println("mean = $(mean(acc)),  stderr = $(stderr(acc))")
+```
+
+## 課題 4：ビン数を変えて比較する
+
+ビン数 `M` を変えると推定精度がどう変わるか調べよう。
+
+```julia
+N = 10_000_000
+for M in [10, 100, 1000]
+    acc = estimate_pi_binning(N, M)
+    println("M=$M:  mean=$(mean(acc)),  stderr=$(stderr(acc))")
+end
+```
+
+### 考えてみよう
+
+- `M` を増やすと標準誤差はどう変わる？
+- `M` を増やしすぎるとどうなる？（各ビンのサンプル数 `B` が小さくなりすぎると？）
+- この「ビン数の選び方」について LLM に相談してみよう
+
+## 発展：表示を見やすくする
+
+`Base.show` を定義すると、`println` での表示をカスタマイズできる：
+
+```julia
+function Base.show(io::IO, acc::Accumulator)
+    if acc.n == 0
+        print(io, "Accumulator(empty)")
+    else
+        print(io, "mean=$(mean(acc)), stderr=$(stderr(acc)), n=$(acc.n)")
+    end
+end
+```
+
+```julia
+acc = estimate_pi_binning(10_000_000, 100)
+println(acc)  # => mean=3.14159..., stderr=0.00016..., n=100
+```
+
+### LLM への依頼例
+
+```
+Accumulator に Base.show メソッドを定義して、
+println したときに平均・標準誤差・データ数が表示されるようにして。
+```
+
+## チェックリスト
+
+- `Accumulator` 構造体が定義できた
+- `push!`、`mean`、`stderr` が動く
+- `estimate_pi_binning(N, M)` が `Accumulator` を返す
+- ビン数を変えて標準誤差の変化を確認できた
+- 変更を commit & push できた

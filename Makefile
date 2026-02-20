@@ -3,12 +3,10 @@ BOOK_DIR := book
 .PHONY: build serve clean
 
 build:
-	cd $(BOOK_DIR) && shiroa build --mode static-html-dyn-paged --path-to-root /
-	python3 $(BOOK_DIR)/scripts/relativize_dist.py $(BOOK_DIR)/dist
+	cd $(BOOK_DIR) && quarto render
 
 serve:
-	cd $(BOOK_DIR) && shiroa serve --mode static-html-dyn-paged --path-to-root /
+	cd $(BOOK_DIR) && quarto preview
 
 clean:
-	rm -rf $(BOOK_DIR)/dist $(BOOK_DIR)/.shiroa
-
+	rm -rf $(BOOK_DIR)/dist
