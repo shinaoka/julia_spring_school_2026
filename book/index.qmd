@@ -1,19 +1,19 @@
 ---
-title: "計算物理スプリングスクール 2026 — Julia 入門"
+title: "B-1. 計算物理学のための Julia 入門"
 ---
 
-このサイトは「計算物理スプリングスクール 2026 — Julia 入門」の講義ノートです。
+このサイトは「計算物理春の学校 2026 — B-1. 計算物理学のための Julia 入門」の講義ノートです。
 
 ## 講師
 
-品岡 寛（埼玉大学 大学院理工学研究科）
-
-- GitHub: [shinaoka](https://github.com/shinaoka)
-- 研究開発: 計算物理、量子多体系、物性物理、研究用OSSの実装
-- 代表的OSS: `SparseIR.jl`（Julia）、`sparse-ir`（Python）、`TensorCrossInterpolation.jl` など
-- 使用言語: Julia, Python, Rust, C++/C, Fortran, ...
-- 最近の活動: [tensor4all.org](https://tensor4all.org)、テンソルネットワーク計算のエコシステム構築（Python, Julia, C++, Rust）
-- 個人サイト: [shinaoka.github.io](https://shinaoka.github.io)
+- 金賀 穂（千葉大学）
+- 品岡 寛（埼玉大学 大学院理工学研究科）
+  - GitHub: [shinaoka](https://github.com/shinaoka)
+  - 研究開発: 計算物理、量子多体系、物性物理、研究用OSSの実装
+  - 代表的OSS: `SparseIR.jl`（Julia）、`sparse-ir`（Python）、`TensorCrossInterpolation.jl` など
+  - 使用言語: Julia, Python, Rust, C++/C, Fortran, ...
+  - 最近の活動: [tensor4all.org](https://tensor4all.org)、テンソルネットワーク計算のエコシステム構築（Python, Julia, C++, Rust）
+  - 個人サイト: [shinaoka.github.io](https://shinaoka.github.io)
 
 ### 生成AI時代になぜコーディングを学ぶのか？
 
