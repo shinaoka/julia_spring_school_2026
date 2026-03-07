@@ -31,7 +31,7 @@ AI を使ったコーディングには、大きく3つの世代がある。
 
 ## 前提条件
 
-- Git / GitHub の基本操作（前回の講義で扱った内容）
+- Git / GitHub の基本操作（別の講義で扱った内容）
 - GitHub アカウント、できれば GitHub Student Developer Pack
 - GitHub CLI（`gh`）のインストールと認証
   - 参考: <https://docs.github.com/ja/github-cli/github-cli/about-github-cli>

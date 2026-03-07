@@ -20,7 +20,7 @@ LLM がコードを書いてくれる時代でも、*抽象化・構造化の考
 
 == 前提
 
-- Git / GitHub の基礎操作（前日講義でカバー済み）
+- Git / GitHub の基礎操作（別の講義で扱っている内容）
 - GitHub アカウントの取得と GitHub Student Developer Pack 取得
 - GitHub CLI（`gh`）の導入と認証
   - 参考: https://docs.github.com/ja/github-cli/github-cli/about-github-cli
