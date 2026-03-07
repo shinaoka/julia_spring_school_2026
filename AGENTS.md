@@ -63,6 +63,12 @@ Explain what you just did. Describe which files were created or updated, what ea
 - In Julia environment setup, distinguish clearly between the project environment and the global environment.
 - The explanation spell should cover what changed, why it changed, and how to confirm it locally.
 
+## Writing Style
+
+- The lecture notes are written in Japanese using the **である体** (da/dearu style), not the です/ます体 (desu/masu style).
+- Do not mix styles. Use である, だ, する, ない consistently.
+- Prompts (spells) given to AI assistants are also part of the lecture notes and should follow である体 in Japanese.
+
 ## Success Criterion
 
 The learner should finish each AI-assisted step with both:

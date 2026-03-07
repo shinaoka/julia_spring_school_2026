@@ -4,7 +4,7 @@
 
 = Julia の抽象化を読めるように
 
-狙いは、LLM が生成する Julia を「読める／直せる」状態になることです。
+狙いは、LLM が生成する Julia を「読める／直せる」状態になることである。
 
 == 関数化：抽象化の第一歩
 
@@ -164,7 +164,7 @@ Rectangle(2.0, 3.0) isa Shape  # true
 
 ```julia
 # Shape 共通のメソッド（抽象型に対して定義）
-describe(s::Shape) = println("これは図形です")
+describe(s::Shape) = println("これは図形である")
 
 # 個別のメソッド（具体型に対して定義）
 area(c::Circle) = π * c.radius^2

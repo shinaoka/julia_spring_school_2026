@@ -4,7 +4,7 @@
 
 = 受講前提とゴール
 
-この講義（講義1）の全体像です。
+この講義（講義1）の全体像である。
 
 == 前提
 
@@ -12,7 +12,7 @@
 - GitHub アカウントの取得と GitHub Student Developer Pack 取得
 - GitHub CLI（`gh`）の導入と認証
   - 参考: https://docs.github.com/ja/github-cli/github-cli/about-github-cli
-  - インストール後、以下で認証を済ませておく：
+  - インストール後、以下で認証を済ませておくこと：
 
 ```sh
 gh auth login
@@ -21,7 +21,7 @@ gh auth status   # 認証できたか確認
 ```
 
 - Julia のインストール（juliaup 推奨）
-  - juliaup を使うと、Julia 本体のインストールとバージョン切り替えをまとめて管理できます
+  - juliaup を使うと、Julia 本体のインストールとバージョン切り替えをまとめて管理できる
   - 参考: https://github.com/JuliaLang/juliaup
   - インストール例：
 
@@ -84,7 +84,7 @@ julia -e 'using Pkg; Pkg.add(["BenchmarkTools", "Plots", "Statistics"])'
 
 === LLM 時代にコーディングを学ぶ意味
 
-LLM がコードを書いてくれる時代でも、*抽象化・構造化の考え方* を理解していないと、LLM の出力を評価できず、適切な指示も出せません。この講義では「自分で全部書く」のではなく「LLM と協働しながら、コードの設計意図を読み書きできる」ことを目指します。
+LLM がコードを書いてくれる時代でも、*抽象化・構造化の考え方* を理解していないと、LLM の出力を評価できず、適切な指示も出せない。この講義では「自分で全部書く」のではなく「LLM と協働しながら、コードの設計意図を読み書きできる」ことを目指す。
 
 === 具体的なゴール
 

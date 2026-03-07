@@ -4,7 +4,7 @@
 
 = まずは GitHub を使ってみよう
 
-この題材では、最初に「自分のレポジトリ」を作り、作業を1回転させます。
+この題材では、最初に「自分のレポジトリ」を作り、作業を1回転させる。
 
 == ゴール
 
@@ -22,7 +22,7 @@
 
 == 1. GitHub 上でリポジトリ作成
 
-GitHub CLI を使って、新しいリポジトリを作成します。
+GitHub CLI を使って、新しいリポジトリを作成する。
 
 ```sh
 # 公開リポジトリを作成（Julia 用 .gitignore 付き）
@@ -53,7 +53,7 @@ code my-julia-project
 
 == 3. LLM に「プロジェクト環境」を作らせる
 
-VS Code の Copilot Chat / Gemini Code Assist（または任意の LLM）に、以下のように頼んでみましょう。
+VS Code の Copilot Chat / Gemini Code Assist（または任意の LLM）に、以下のように頼んでみる。
 
 *プロンプト例：*
 
@@ -63,7 +63,7 @@ Project.toml を追加して、BenchmarkTools を依存に入れて。
 手順をステップごとに教えて。
 ```
 
-LLM の回答に従って操作するか、以下を直接実行します。
+LLM の回答に従って操作するか、以下を直接実行する。
 
 ```sh
 cd my-julia-project
@@ -76,7 +76,7 @@ julia -e '
 '
 ```
 
-これで `Project.toml` と `Manifest.toml` が生成されます。
+これで `Project.toml` と `Manifest.toml` が生成される。
 
 - *`Project.toml`*：このプロジェクトが使うパッケージの一覧（人が管理する）
 - *`Manifest.toml`*：依存関係を含む全パッケージの正確なバージョン（自動生成）
@@ -89,7 +89,7 @@ julia -e '
 
 == 4. commit & push
 
-ここまでの変更をリポジトリに記録します。
+ここまでの変更をリポジトリに記録する。
 
 ```sh
 cd my-julia-project

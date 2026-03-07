@@ -4,7 +4,7 @@
 
 = 発展課題：パッケージとは？作り方は？
 
-このページは「プロジェクト環境」の次の一歩として、Julia の *パッケージ* を扱う導入です。
+このページは「プロジェクト環境」の次の一歩として、Julia の *パッケージ* を扱う導入である。
 
 == パッケージとは？（最小の理解）
 
@@ -14,7 +14,7 @@
 
 == サンプルを見てみよう
 
-性能改善で使ったサンプルリポジトリ（`julia_spring_school_2026_sample`）に、最適化済みの `estimate_pi` をパッケージ化した例が入っています。自分の fork を開いて `topics/package_dev/MonteCarloPi/` を見てみましょう。
+性能改善で使ったサンプルリポジトリ（`julia_spring_school_2026_sample`）に、最適化済みの `estimate_pi` をパッケージ化した例が入っている。自分の fork を開いて `topics/package_dev/MonteCarloPi/` を見てみよう。
 
 === ディレクトリ構成
 
@@ -91,7 +91,7 @@ julia = "1.10"
 
 == テストを動かす
 
-サンプルリポジトリの `MonteCarloPi` ディレクトリでテストを実行できます。
+サンプルリポジトリの `MonteCarloPi` ディレクトリでテストを実行できる。
 
 ```sh
 cd julia_spring_school_2026_sample/topics/package_dev/MonteCarloPi
@@ -102,13 +102,13 @@ julia --project=. -e 'using Pkg; Pkg.instantiate(); Pkg.test()'
 
 == 作り方（最短ルート）
 
-自分でパッケージを作るときは、基本は LLM に任せて OK です（雛形作成・テスト作成・GitHub 反映までを 1 セットで依頼する）。
+自分でパッケージを作るときは、基本は LLM に任せてよい（雛形作成・テスト作成・GitHub 反映までを 1 セットで依頼する）。
 
 - LLM に依頼：最小パッケージ雛形（`src/` と `test/`）を作る
 - LLM に依頼：`test/runtests.jl` に最小テスト（`Test` の `@testset`）を作る
 - LLM に依頼：commit & push（必要なら GitHub Actions の test まで）
 
-（参考）手でやる場合は、REPL の Pkg モードで雛形を作れます：`pkg> generate MonteCarloPi`
+（参考）手でやる場合は、REPL の Pkg モードで雛形を作れる：`pkg> generate MonteCarloPi`
 
 == LLM への依頼例
 
