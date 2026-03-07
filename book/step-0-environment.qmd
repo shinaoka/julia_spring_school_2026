@@ -81,7 +81,7 @@ AGENTS.md に実際のルールがある理由、CLAUDE.md が最小限な理由
 
 ```text
 カレントディレクトリに新しい Julia 環境を作成してください。
-BenchmarkTools と Plots を依存パッケージとして追加してください。
+BenchmarkTools を依存パッケージとして追加してください。
 ```
 
 ## 説明スペル 2
@@ -126,7 +126,7 @@ git init
 ```julia
 using Pkg
 Pkg.activate(".")
-Pkg.add(["BenchmarkTools", "Plots"])
+Pkg.add("BenchmarkTools")
 Pkg.status()
 ```
 
@@ -146,7 +146,7 @@ Pkg.status()
 - `git init`: カレントフォルダにローカル Git リポジトリを作成
 - `using Pkg`: Julia のパッケージマネージャを読み込み
 - `Pkg.activate(".")`: カレントディレクトリをアクティブなプロジェクト環境として設定
-- `Pkg.add(["BenchmarkTools", "Plots"])`: 必要なパッケージをこのプロジェクトに追加
+- `Pkg.add("BenchmarkTools")`: 必要なパッケージをこのプロジェクトに追加
 - `Pkg.status()`: どの環境がアクティブで、どのパッケージがインストールされているか確認
 
 セットアップ後、以下を確認してください:

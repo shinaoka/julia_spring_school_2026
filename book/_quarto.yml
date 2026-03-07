@@ -3,26 +3,25 @@ project:
   output-dir: dist
 
 book:
-  title: "Computational Physics Spring School 2026 — Introduction to Julia"
-  author: "Hiroshi Shinaoka"
+  title: "B-1. 計算物理学のための Julia 入門"
+  author: "金賀 穂、品岡 寛"
   chapters:
     - index.qmd
     - prerequisites.qmd
-    - step-0-environment.qmd
     - step-0_5-julia-syntax.qmd
+    - step-0-environment.qmd
     - step-1-lattice.qmd
     - step-2-observables.qmd
     - step-3-metropolis.qmd
     - step-4-structure.qmd
     - step-5-performance.qmd
-    - step-5_5-package-and-tests.qmd
-    - step-6-phase-transition.qmd
-    - package-dev.qmd
+    - step-6-package.qmd
+    - step-7-phase-transition.qmd
 
 format:
   html:
     theme: cosmo
-    lang: en
+    lang: ja
     toc: true
     code-copy: true
     code-overflow: wrap
