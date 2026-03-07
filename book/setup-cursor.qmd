@@ -1,0 +1,26 @@
+---
+title: "Cursor Pro のセットアップ"
+sidebar: false
+page-navigation: false
+---
+
+[前提条件と目標に戻る](prerequisites.qmd)
+
+このページは補助資料である。Cursor をこの講義で使うための最小限の準備をまとめる。
+
+## インストールと契約
+
+[cursor.com](https://cursor.com) からインストールし、**Pro プラン**を契約する。
+
+::: {.callout-warning}
+Cursor の無料版（Hobby プラン）にはエージェント機能がない。この講義で使うには Pro プランが必要である。
+:::
+
+## この講義で使う機能
+
+- **Agent モード**: ファイル操作を AI に任せるときに使う
+- **PLAN モード**: 設計 -> 承認 -> 実装の流れで進めたいときに使う
+
+初学者にとっては、まず PLAN モードで考え方を確認し、その後 Agent モードで実装へ進む流れが扱いやすい。
+
+[前提条件と目標に戻る](prerequisites.qmd)

@@ -1,6 +1,19 @@
 project:
   type: book
   output-dir: dist
+  post-render: scripts/render_setup_pages.sh
+  render:
+    - index.qmd
+    - prerequisites.qmd
+    - step-0_5-julia-syntax.qmd
+    - step-0-environment.qmd
+    - step-1-lattice.qmd
+    - step-2-observables.qmd
+    - step-3-metropolis.qmd
+    - step-4-structure.qmd
+    - step-5-performance.qmd
+    - step-6-package.qmd
+    - step-7-phase-transition.qmd
 
 book:
   title: "B-1. 計算物理学のための Julia 入門"
