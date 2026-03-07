@@ -1,16 +1,16 @@
 ---
-title: "Julia Syntax Quickstart"
+title: "Julia 文法クイックスタート"
 ---
 
-This page gives you a quick tour of the Julia syntax you will see in the next few steps. You do not need to memorize everything here. The goal is to recognize these patterns when they appear, so you can read the code without getting stuck.
+このページでは、次のいくつかのステップで登場する Julia の文法を素早く紹介します。すべてを暗記する必要はありません。目標は、コードに出てきたときにこれらのパターンを認識し、読めるようにすることです。
 
-## What This Page Is For
+## このページの目的
 
-This is not a complete Julia tutorial. It covers only the syntax that appears in Step 1 and Step 2. More advanced topics such as `struct`, modules, and performance optimization come later.
+これは完全な Julia チュートリアルではありません。Step 1 と Step 2 で登場する文法のみを扱います。`struct`、モジュール、パフォーマンス最適化などの高度なトピックは後のステップで扱います。
 
-## Variables and Expressions
+## 変数と式
 
-Julia code reads left to right:
+Julia のコードは左から右に読みます:
 
 ```julia
 x = 3
@@ -18,13 +18,13 @@ beta = 1 / T
 L = 8
 ```
 
-- `=` assigns a value to a variable
-- You can use variables in expressions
-- Variable names are case-sensitive
+- `=` は変数に値を代入します
+- 変数を式の中で使えます
+- 変数名は大文字・小文字を区別します
 
-## Functions and Return Values
+## 関数と戻り値
 
-A function takes input, does computation, and returns output:
+関数は入力を受け取り、計算を行い、出力を返します:
 
 ```julia
 function initialize_spins(L)
@@ -32,61 +32,61 @@ function initialize_spins(L)
 end
 ```
 
-- `function name(args) ... end` defines a function
-- `return` makes the output explicit
-- In Julia, the last expression is also returned automatically, but using `return` is clearer for beginners
+- `function 名前(引数) ... end` で関数を定義します
+- `return` で出力を明示します
+- Julia では最後の式も自動的に返されますが、初学者には `return` を書いた方が分かりやすいです
 
-You call a function like this:
+関数はこのように呼び出します:
 
 ```julia
 spins = initialize_spins(8)
 ```
 
-## Arrays, Matrices, and Indexing
+## 配列・行列・インデックス
 
-An array stores many values together:
-
-```julia
-A = [1, 2, 3]           # 1D array
-B = [1 2; 3 4]          # 2D array (matrix)
-C = rand(Int8[-1, 1], 4, 4)  # 4x4 matrix
-```
-
-- A 2D array is like a table or matrix
-- `A[i]` gets the i-th element (1D)
-- `A[i, j]` gets the element at row i, column j (2D)
-- **Important**: Julia uses 1-based indexing, not 0-based
-
-Useful functions:
+配列は多くの値をまとめて格納します:
 
 ```julia
-size(A)        # dimensions of A
-length(A)      # total number of elements
-eltype(A)      # element type (e.g., Int8, Float64)
+A = [1, 2, 3]           # 1次元配列
+B = [1 2; 3 4]          # 2次元配列（行列）
+C = rand(Int8[-1, 1], 4, 4)  # 4x4 行列
 ```
 
-## Loops and Ranges
+- 2次元配列は表や行列のようなものです
+- `A[i]` で i 番目の要素を取得（1次元）
+- `A[i, j]` で i 行 j 列の要素を取得（2次元）
+- **重要**: Julia は 1-based インデックス（配列は 1 から始まる、0 からではない）
 
-A `for` loop repeats code:
+便利な関数:
+
+```julia
+size(A)        # A の次元
+length(A)      # 要素の総数
+eltype(A)      # 要素の型（例: Int8, Float64）
+```
+
+## ループと範囲
+
+`for` ループはコードを繰り返します:
 
 ```julia
 for i in 1:L
-    # do something with i
+    # i を使って何かする
 end
 ```
 
-- `1:L` creates a range from 1 to L
-- You can nest loops or combine them:
+- `1:L` は 1 から L までの範囲を作ります
+- ループをネストしたり、まとめたりできます:
 
 ```julia
 for i in 1:L, j in 1:L
-    # do something with i and j
+    # i と j を使って何かする
 end
 ```
 
-## Types You Will See
+## 登場する型
 
-Julia has types, but you do not need to write them everywhere:
+Julia には型がありますが、どこにでも書く必要はありません:
 
 ```julia
 x = 3          # Int
@@ -94,18 +94,18 @@ y = 3.0        # Float64
 z = Int8(3)    # Int8
 ```
 
-Common types in this course:
+この講義で登場する主な型:
 
-- `Int`: integer (usually 64-bit)
-- `Int8`: small integer (8-bit, saves memory)
-- `Float64`: floating-point number
-- `Bool`: true or false
+- `Int`: 整数（通常64ビット）
+- `Int8`: 小さな整数（8ビット、メモリ節約）
+- `Float64`: 浮動小数点数
+- `Bool`: true または false
 
-Type annotations (like `L::Int`) mean "this should be an integer." You can read them, but you do not need to write them everywhere yet.
+型アノテーション（`L::Int` など）は「これは整数であるべき」という意味です。読めれば十分で、まだどこにでも書く必要はありません。
 
-## Mutation, `foo!`, and `copy`
+## 変更操作、`foo!`、`copy`
 
-Some functions modify arrays in place:
+一部の関数は配列をその場で変更します:
 
 ```julia
 function flip_first!(spins)
@@ -115,33 +115,36 @@ end
 
 spins = [1 1; 1 1]
 flip_first!(spins)
-# spins is now [-1 1; 1 1]
+# spins は [-1 1; 1 1] になる
 ```
 
-- Functions ending with `!` are a convention meaning "this might modify its arguments"
-- Arrays are mutable: changes inside a function affect the original array
-- If you need a separate copy, use `copy(x)`:
+::: {.callout-note}
+Julia では、引数を変更する可能性がある関数の名前の末尾に `!` をつける慣習があります。これは強制ではなく慣習ですが、広く守られています。`!` がついている関数を見たら「引数が書き換わるかもしれない」と意識してください。
+:::
+
+- 配列は mutable（変更可能）: 関数内での変更は元の配列に影響します
+- 別のコピーが必要な場合は `copy(x)` を使います:
 
 ```julia
 original = [1, 2, 3]
 duplicate = copy(original)
 modify!(duplicate)
-# original is unchanged
+# original は変更されない
 ```
 
-## Update Operators
+## 更新演算子
 
-Shorthand for common updates:
+よくある更新操作の省略記法:
 
 ```julia
-x += 1    # same as x = x + 1
-e -= 5    # same as e = e - 5
-spins[i, j] *= -1  # same as spins[i, j] = spins[i, j] * -1
+x += 1    # x = x + 1 と同じ
+e -= 5    # e = e - 5 と同じ
+spins[i, j] *= -1  # spins[i, j] = spins[i, j] * -1 と同じ
 ```
 
-## `using` and Packages
+## `using` とパッケージ
 
-To use code from a package:
+パッケージのコードを使うには:
 
 ```julia
 using Pkg
@@ -149,23 +152,23 @@ using BenchmarkTools
 using Plots
 ```
 
-- `using PackageName` loads the package
-- Packages provide functions you can call
-- Project environments (from Step 0) control which packages are available
+- `using パッケージ名` でパッケージを読み込みます
+- パッケージは呼び出せる関数を提供します
+- プロジェクト環境（Step 0 で作成）が利用可能なパッケージを制御します
 
-## What You Can Ignore For Now
+## 今は無視してよいもの
 
-You do not need to understand these yet:
+以下はまだ理解する必要がありません:
 
-- `struct` (comes in Step 4)
-- `module` and package development (comes later)
-- Multiple dispatch details
-- Performance optimization details (comes in Step 5)
-- Broadcasting with `.` (not used in this course)
+- `struct`（Step 4 で扱う）
+- `module` とパッケージ開発（後で扱う）
+- 多重ディスパッチの詳細
+- パフォーマンス最適化の詳細（Step 5 で扱う）
+- `.` によるブロードキャスト（この講義では明示的には使いません）
 
-## Mini Code-Reading Check
+## ミニ・コードリーディング確認
 
-Read this and explain what it does:
+以下を読んで、何をしているか説明してください:
 
 ```julia
 function count_ones(A)
@@ -179,12 +182,12 @@ function count_ones(A)
 end
 ```
 
-Then answer:
+そして以下の質問に答えてください:
 
-1. What does `size(A, 1)` return?
-2. Why does the function modify `n` inside the loop?
-3. What would happen if you called `count_ones` on a 3x3 matrix filled with ones?
+1. `size(A, 1)` は何を返すか？
+2. なぜループの中で `n` を変更しているのか？
+3. すべて 1 で埋められた 3x3 行列に対して `count_ones` を呼び出すとどうなるか？
 
-## Next Steps
+## 次のステップ
 
-Now you are ready for Step 1, where you will create a function that initializes a 2D Ising lattice.
+これで Step 1 に進む準備ができました。Step 1 では、2次元イジング格子を初期化する関数を作成します。

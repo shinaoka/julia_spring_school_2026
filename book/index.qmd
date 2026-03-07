@@ -1,97 +1,92 @@
 ---
-title: "Computational Physics Spring School 2026 — Introduction to Julia"
+title: "計算物理スプリングスクール 2026 — Julia 入門"
 ---
 
-This site contains the lecture notes for "Computational Physics Spring School 2026 — Introduction to Julia."
+このサイトは「計算物理スプリングスクール 2026 — Julia 入門」の講義ノートです。
 
-## Instructor
+## 講師
 
-Hiroshi Shinaoka (Graduate School of Science and Engineering, Saitama University)
+品岡 寛（埼玉大学 大学院理工学研究科）
 
 - GitHub: [shinaoka](https://github.com/shinaoka)
-- Research and development: computational physics, quantum many-body systems, condensed matter, and research OSS with real implementations
-- Representative OSS: `SparseIR.jl` (Julia), `sparse-ir` (Python), `TensorCrossInterpolation.jl`, and others
-- Languages: Julia, Python, Rust, C++/C, Fortran, ...
-- Recent activity: [tensor4all.org](https://tensor4all.org), building a tensor-network computing ecosystem across Python, Julia, C++, and now Rust
-- Primary site: [shinaoka.github.io](https://shinaoka.github.io)
+- 研究開発: 計算物理、量子多体系、物性物理、研究用OSSの実装
+- 代表的OSS: `SparseIR.jl`（Julia）、`sparse-ir`（Python）、`TensorCrossInterpolation.jl` など
+- 使用言語: Julia, Python, Rust, C++/C, Fortran, ...
+- 最近の活動: [tensor4all.org](https://tensor4all.org)、テンソルネットワーク計算のエコシステム構築（Python, Julia, C++, Rust）
+- 個人サイト: [shinaoka.github.io](https://shinaoka.github.io)
 
-### Why learn coding in the age of generative AI?
+### 生成AI時代になぜコーディングを学ぶのか？
 
-Since October 2025, I have stopped writing code by hand. I give instructions to AI agents in Japanese and English and use them to generate and manage code in Rust, Julia, and other languages. I do not read every line of generated code unless I need to. Even so, this works fine in practice. Why?
+2025年10月以降、私はコードを手で書くことをやめました。日本語と英語でAIエージェントに指示を出し、Rust、Julia などのコードを生成・管理しています。生成されたコードを1行ずつ読むことも基本的にはしません。それでも実用上は問題なく動きます。なぜでしょうか？
 
-What we actually want is code that:
+私たちが本当に必要としているのは、以下の条件を満たすコードです:
 
-- produces correct results
-- runs at an acceptable speed
-- has a reasonable structure
+- 正しい結果を出す
+- 許容できる速度で動く
+- 合理的な構造を持つ
 
-If those conditions are satisfied, hand-writing every line is no longer the point. The real question is how to guarantee those properties.
+これらの条件が満たされていれば、すべての行を手で書くこと自体が目的ではありません。本当に重要なのは、これらの性質をどう保証するかです。
 
-- Julia remains a language that is pleasant for humans to read and write. At the same time, the rise of generative AI means that the amount of code written directly by humans will keep decreasing.
-- If you need the highest possible performance in a large system, some core components may be better implemented in Rust or another language. It is not necessary to force everything into Julia.
+- Julia は人間にとって読み書きしやすい言語です。同時に、生成AIの台頭により、人間が直接書くコードの量は今後も減り続けるでしょう。
+- 大規模システムで最高の性能が必要な場合、コア部分を Rust や他の言語で実装した方がよいこともあります。すべてを Julia で強行する必要はありません。
 
-## What is Julia?
+## Julia とは？
 
-Julia sits between human ideas and numerical computation. For example, if you want to solve a differential equation, you can often express the problem in a few lines and let Julia handle the heavy computation underneath.
+Julia は人間のアイデアと数値計算の間に位置する言語です。例えば微分方程式を解きたい場合、問題を数行で表現すれば、Julia が内部で重い計算を処理してくれます。
 
-### Strengths
+### 強み
 
-- **OSS**: anyone can obtain, distribute, and improve it, which makes it easy to align environments in education
-- **Rich package ecosystem**: differential equations, visualization, optimization, automatic differentiation, and more
-- **Package system**: installing and distributing packages is straightforward
-- **Can be fast**: JIT compilation plus type information enables good optimization
-- **Garbage collection**: memory management is automatic, so low-level memory errors are less common
-- **One language across layers**: you can write both interactive high-level code and relatively low-level code in the same language, although I do not think everything must be done in Julia
+- **OSS**: 誰でも入手・配布・改良でき、教育現場で環境を揃えやすい
+- **豊富なパッケージ**: 微分方程式、可視化、最適化、自動微分など
+- **パッケージシステム**: パッケージのインストールと配布が容易
+- **高速化が可能**: JIT コンパイルと型情報による最適化
+- **ガベージコレクション**: メモリ管理が自動で、低レベルのメモリエラーが起きにくい
+- **1つの言語で複数の階層をカバー**: 対話的な高レベルコードと比較的低レベルなコードを同じ言語で書ける（ただし、すべてを Julia で行う必要はない）
 
-### Weaknesses
+### 弱み
 
-- **Hard to push to absolute peak performance**: garbage collection can become a problem in fine-grained parallel workloads
-- **Large-scale development can be difficult**: dynamic typing can increase design and maintenance costs for very large codebases
-- **Reuse from other languages is still uneven**: Python is relatively easy, but some other language integrations remain awkward
+- **絶対的なピーク性能を出しにくい**: ガベージコレクションが細粒度の並列処理で問題になることがある
+- **大規模開発が難しい場合がある**: 動的型付けにより、非常に大きなコードベースでは設計・保守コストが上がる
+- **他言語からの再利用にムラがある**: Python は比較的容易だが、他の言語との連携はまだ不便な部分がある
 
-## Course Overview
+## 講義の概要
 
-In this course, you will learn the foundations of Julia programming with an LLM such as GitHub Copilot, Gemini, or Cursor as a working partner. The assumption is not that you will write everything yourself. The assumption is that you will ask AI for explanations, ask it for minimal code, read what it generated, and correct it when needed.
+この講義では、GitHub Copilot、OpenAI Codex、Gemini などの LLM をパートナーとして活用しながら、Julia プログラミングの基礎を学びます。すべてを自分で書くことが前提ではありません。AI に説明を求め、最小限のコードを書いてもらい、生成されたコードを読んで、必要に応じて修正する — それが前提です。
 
-The goal is not to dump the whole task onto AI. The goal is to complete a **small Julia project with AI support** and learn the minimum set of concepts required to do that responsibly. In particular, this course emphasizes the ability to:
+目標は、タスク全体を AI に丸投げすることではありません。**AI のサポートを受けながら小さな Julia プロジェクトを完成させ**、そのために必要な最小限の概念を責任を持って学ぶことです。特に、以下の能力を重視します:
 
-- `Project.toml` と `Manifest.toml` の役割を区別できる
-- グローバル環境とプロジェクト環境を区別できる
-- 関数や `struct` が何のためにあるかを説明できる
-- AI が出した Julia コードを読んで、危ない箇所を見つけられる
-- `BenchmarkTools` を使って「速くなったか」を自分で確かめられる
-- distinguish the roles of `Project.toml` and `Manifest.toml`
-- distinguish the global environment from a project environment
-- explain why functions and `struct`s exist
-- read AI-generated Julia code and spot risky parts
-- use `BenchmarkTools` to verify whether code actually became faster
+- `Project.toml` と `Manifest.toml` の役割の違いを説明できる
+- グローバル環境とプロジェクト環境の違いを説明できる
+- 関数や `struct` がなぜ存在するかを説明できる
+- AI が生成した Julia コードを読み、危険な部分を見つけられる
+- `BenchmarkTools` を使って、コードが実際に速くなったか検証できる
 
-The project theme is the **2D Ising model**. You will build it step by step with AI and use it to learn Julia environments, arrays, functions, state representation, the Metropolis method, and basic optimization.
+プロジェクトのテーマは **2次元イジングモデル** です。AI と一緒にステップごとに構築し、Julia の環境管理、配列、関数、状態表現、メトロポリス法、基本的な最適化を学びます。
 
-The course is organized into two sessions:
+講義は2つのセッションで構成されています:
 
-- Session 1: create the environment, initialize the lattice, measure observables, and get the Metropolis update working
-- Session 2: improve the state representation, measure performance, and do a small temperature scan with plotting
+- セッション 1: 環境の作成、格子の初期化、物理量の計算、メトロポリス更新の実装
+- セッション 2: 状態表現の改善、パフォーマンスの計測、温度スキャンとプロット
 
-Each page includes copy-paste-ready prompts for AI tools, code-reading-based checks, and prompts for generating extra exercises. If you already understand a topic, you can skip ahead.
+各ページには AI ツール用のコピペ可能なプロンプト、コードリーディングによる確認問題、追加練習用のプロンプトが含まれています。すでに理解している内容はスキップできます。
 
-## Topics
+## 目次
 
-1. **Prerequisites and Goals** — setup and required tools
-2. **Step 0: Create the Project and Environment** — `.gitignore`, `git init`, `gh repo create`, `Project.toml`, `Manifest.toml`, `Pkg.activate`
-3. **Julia Syntax Quickstart** — functions, arrays, loops, types, mutation, and `using` (skim this before Step 1)
-4. **Step 1: Create the Lattice** — represent the state on a 2D lattice
-5. **Step 2: Measure Observables** — write functions for energy and magnetization
-6. **Step 3: Implement the Metropolis Update** — understand a new algorithm through AI dialogue
-7. **Step 4: Organize State and Code Structure** — improve readability with `struct` and clearer roles
-8. **Step 5: Benchmark and Optimize** — `@btime`, avoiding globals, reducing allocations
-9. **Step 5.5: Convert to Package and Add Tests** — brainstorming, Superpowers, package structure, and tests
-10. **Step 6: Scan Temperature and Plot `<M^2>`** — use AI to make a quick phase-transition plot
-11. **Advanced Topic: What Is a Package and How Do You Build One?** — packaging and CI
+1. **前提条件と目標** — セットアップと必要なツール
+2. **Step 0: プロジェクトと環境の作成** — `.gitignore`、`git init`、`gh repo create`、`Project.toml`、`Manifest.toml`、`Pkg.activate`
+3. **Julia 文法クイックスタート** — 関数、配列、ループ、型、変更操作、`using`（Step 1 の前にざっと読む）
+4. **Step 1: 格子の作成** — 2次元格子上の状態を表現する
+5. **Step 2: 物理量の計算** — エネルギーと磁化の関数を書く
+6. **Step 3: メトロポリス更新の実装** — AI との対話で新しいアルゴリズムを理解する
+7. **Step 4: 状態とコード構造の整理** — `struct` と明確な役割分担で読みやすくする
+8. **Step 5: ベンチマークと最適化** — `@btime`、グローバル変数の回避、アロケーションの削減
+9. **Step 5.5: パッケージ化とテストの追加** — ブレインストーミング、パッケージ構造、テスト
+10. **Step 6: 温度スキャンと `<M^2>` のプロット** — AI を使って相転移のプロットを素早く作る
+11. **上級トピック: パッケージとは何か、どう作るか** — パッケージング と CI
 
-Follow the pages from top to bottom using the left sidebar.
+左側のサイドバーで上から順にページを辿ってください。
 
-## Links
+## リンク
 
-- Lecture note source code: [GitHub repository](https://github.com/shinaoka/julia_spring_school_2026)
-- Sample code for students to fork and use: [sample repository](https://github.com/shinaoka/julia_spring_school_2026_sample)
+- 講義ノートのソースコード: [GitHub リポジトリ](https://github.com/shinaoka/julia_spring_school_2026)
+- 受講者がフォークして使うサンプルコード: [サンプルリポジトリ](https://github.com/shinaoka/julia_spring_school_2026_sample)

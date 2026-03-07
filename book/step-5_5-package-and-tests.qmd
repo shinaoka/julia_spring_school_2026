@@ -1,134 +1,96 @@
 ---
-title: "Step 5.5: Convert to Package and Add Tests"
+title: "Step 5.5: パッケージ化とテストの追加"
 ---
 
-Before moving to the final temperature scan, convert your code into a proper Julia package and add tests. This step also introduces **brainstorming** and **Superpowers**, a framework that helps AI agents work more systematically.
+最後の温度スキャンに進む前に、コードを適切な Julia パッケージに変換し、テストを追加します。このステップは短いソフトウェアエンジニアリングの寄り道です。物理を覆い隠すことが目的ではなく、再利用、検証、拡張がしやすいコードを残すことが目的です。
 
-## Purpose
+## 目的
 
-Convert the project into a Julia package structure, add basic tests, and learn why brainstorming before implementation matters.
+プロジェクトを Julia パッケージ構造に変換し、基本的なテストを追加し、**実装前にブレインストーミングすることがなぜ重要か**を学びます。
 
-## Why Brainstorming Matters
+## なぜブレインストーミングが大切か
 
-When you ask AI to "convert this to a package," it might jump straight into creating files. But a better approach is to first think through:
+AI に「これをパッケージに変換して」と頼むと、すぐにファイルの作成に取りかかるかもしれません。しかし、より良いアプローチは、まず以下を考え抜くことです:
 
-- What should the package be called?
-- What functions should be public (exported)?
-- What should stay private (internal helpers)?
-- What tests are most important to add first?
+- パッケージ名は何にすべきか？
+- どの関数を公開（export）すべきか？
+- どの関数を非公開（内部ヘルパー）のままにすべきか？
+- まず最初に追加すべきテストは何か？
 
-This is **brainstorming**: asking questions before writing code. It leads to better designs and fewer rewrites.
+これが**ブレインストーミング**です。コードを書く前に問いを立てること。これにより、より良い設計と少ない手戻りが実現します。
 
-## Introducing Superpowers
+### ツールごとのブレインストーミングの進め方
 
-[Superpowers](https://github.com/obra/superpowers) is a framework that teaches AI agents to use systematic workflows. One of its core skills is **brainstorming**, which ensures the agent asks clarifying questions before jumping into implementation.
+使っている AI ツールに合わせて、以下のように進めてください:
 
-### Installing Superpowers
+- **OpenAI Codex**: 以下の「実行スペル」をそのまま貼り付けてください。Codex は対話的にブレインストーミングに応じてくれます。
+- **Cursor**: チャットモードを **PLAN モード**（Agent モードの隣のドロップダウンで選択）に切り替えてから、実行スペルを貼り付けてください。PLAN モードでは、Cursor はコードを書く前に設計プランを提示し、あなたの承認を得てから実装に移ります。
+- **GitHub Copilot / Gemini**: 以下の実行スペルをそのまま貼り付けてください。プロンプト自体が「コードを書く前に考えよう」という指示を含んでいるため、手動でブレインストーミングを行えます。
 
-Superpowers officially supports the following platforms:
+::: {.callout-tip}
+## 発展: Superpowers フレームワーク
 
-**Cursor** (via Plugin Marketplace):
+AI エージェントに体系的なワークフロー（ブレインストーミング、TDD など）を自動的に適用させる [Superpowers](https://github.com/obra/superpowers) というフレームワークもあります。Claude Code や Cursor で利用でき、ブレインストーミングを自動でトリガーしてくれます。興味がある場合はリンク先を参照してください。この講義では手動のブレインストーミングで十分です。
+:::
 
-```text
-/plugin-add superpowers
-```
+## 到達目標
 
-**Claude Code** (via Plugin Marketplace):
+このステップの終わりまでに、以下ができていること:
 
-First register the marketplace:
+- ブレインストーミングでテスト計画を決定した
+- Julia パッケージ構造（`src/`、`test/`）がある
+- `module` 宣言がある
+- エクスポートされた関数（公開 API）がある
+- ブレインストーミングの議論に基づくテストがある
+- ブレインストーミングがなぜ役立つかの理解がある
 
-```text
-/plugin marketplace add obra/superpowers-marketplace
-```
+## 実行スペル: ブレインストーミング
 
-Then install:
-
-```text
-/plugin install superpowers@superpowers-marketplace
-```
-
-**Codex** and **OpenCode** also have manual setup instructions, but are less commonly used in this course.
-
-**VS Code with GitHub Copilot** (community alternative):
-
-Superpowers is not officially supported for GitHub Copilot, but there is a community-maintained alternative:
-
-1. Install the GitHub Copilot extension in VS Code if you haven't already.
-2. Use the community skills repository: [faulkdev/github-copilot-superpowers](https://playbooks.com/skills/faulkdev/github-copilot-superpowers)
-3. Alternatively, you can manually practice brainstorming by explicitly asking your AI to think through the design before writing code. The Execution Spell 1 below shows how to do this.
-
-The key idea is the same: ask questions before jumping into implementation, even if Superpowers skills don't trigger automatically.
-
-After installation, start a new session. The agent will automatically use Superpowers skills when appropriate.
-
-## Target Outcome
-
-By the end of this step, you should have:
-
-- Superpowers installed in your AI tool (or manual brainstorming practice)
-- a test plan decided through brainstorming
-- a Julia package structure (`src/`, `test/`)
-- a `module` declaration
-- exported functions (public API)
-- basic tests based on your brainstorming discussion
-- an understanding of why brainstorming helps
-
-## Execution Spell: Convert to Package and Add Tests
-
-**If you have Superpowers installed**, the brainstorming will happen automatically. Just ask:
+まず設計を考えるために、以下を AI に貼り付けてください。
 
 ```text
-Convert this Julia project into a minimal Julia package.
-Create the standard package structure with src/ and test/ directories,
-move the core code into a module, export the public functions,
-and add appropriate tests. Think through the design and test plan first.
+2次元イジングモデルのコードを Julia パッケージに変換したいです。
+コードを書く前に、一緒に設計を考えてください:
+- パッケージ名は何が良いか？
+- どの関数をエクスポート（公開 API）すべきか？
+- どの関数を非公開にすべきか？
+- まず最初に追加すべき最も重要なテストは何か？
+- モジュール構造はどうあるべきか？
+
+一度に1つずつ質問して、設計を洗練してください。
 ```
 
-**If you don't have Superpowers** (e.g., VS Code Copilot), do brainstorming manually first:
+## 実行スペル: パッケージ変換
+
+ブレインストーミングの後、以下を AI に貼り付けてください。
 
 ```text
-I want to convert my 2D Ising model code into a Julia package.
-Before writing any code, help me think through:
-- What should the package name be?
-- Which functions should be exported (public API)?
-- Which functions should stay private?
-- What are the most important tests to add first?
-- What should the module structure look like?
-
-Ask me questions one at a time to refine the design.
+設計の議論に基づいて、この Julia プロジェクトを最小限のパッケージに変換してください。
+src/ と test/ ディレクトリを持つ標準的なパッケージ構造を作成し、
+コアコードをモジュールに移動し、公開関数をエクスポートし、
+議論したテストを実装してください。
+シンプルで読みやすくしてください。
 ```
 
-Then, after the brainstorming discussion, use this execution spell:
+## 説明スペル
 
 ```text
-Convert this Julia project into a minimal Julia package based on our design.
-Create the standard package structure with src/ and test/ directories,
-move the core code into a module, export the public functions,
-and implement the tests we discussed.
-Keep it simple and readable.
+今作成したものを説明してください。パッケージ構造、
+src/ に移動したもの、module 宣言の役割、
+export の意味、テストの構成を説明してください。
 ```
 
-## Explanation Spell
+## 習得する概念
 
-```text
-Explain what you just created. Describe the package structure,
-what moved into src/, what the module declaration does,
-what export means, and how the tests are organized.
-If Superpowers triggered brainstorming automatically, explain how that helped.
-```
+- 実装前のブレインストーミング
+- Julia パッケージ構造（`src/`、`test/`）
+- `module` と `export`
+- 公開 API vs 非公開ヘルパー
+- 基本的なテスト構造
 
-## Concepts to Acquire
+## 最小限のパッケージ構造
 
-- brainstorming before implementation
-- Superpowers framework
-- Julia package structure (`src/`, `test/`)
-- `module` and `export`
-- public API vs private helpers
-- basic test structure
-
-## A Minimal Package Structure
-
-After brainstorming, your package might look like this:
+ブレインストーミングの後、パッケージは以下のようになるかもしれません:
 
 ```
 ising-project/
@@ -147,7 +109,7 @@ module Ising2D
 
 export initialize_spins, magnetization, energy, metropolis_step!
 
-# ... your existing functions ...
+# ... 既存の関数 ...
 
 end # module
 ```
@@ -160,26 +122,25 @@ using Test
 
 @testset "Ising2D" begin
     @test size(initialize_spins(8)) == (8, 8)
-    
+
     spins = initialize_spins(8)
     m = magnetization(spins)
     @test -1 <= m <= 1
-    
+
     e = energy(spins)
     @test isfinite(e)
 end
 ```
 
-## Why This Matters
+## なぜこれが重要か
 
-- **Brainstorming** helps avoid rework by thinking through design first
-- **Package structure** makes code reusable and testable
-- **Tests** catch bugs and document expected behavior
-- **Superpowers** teaches AI to use systematic workflows
+- **ブレインストーミング**により、設計を先に考えることで手戻りを防げる
+- **パッケージ構造**により、コードが再利用可能でテスト可能になる
+- **テスト**により、バグを捕捉し、期待される動作を文書化できる
 
-## Code-Reading Check
+## コードリーディング確認
 
-Read this:
+以下を読んでください:
 
 ```julia
 module Ising2D
@@ -188,32 +149,32 @@ export initialize_spins
 end
 ```
 
-Answer:
+以下の質問に答えてください:
 
-1. What does `export` do?
-2. Why might some functions not be exported?
-3. How do tests help when you refactor code later?
+1. `export` は何をするか？
+2. 一部の関数がエクスポートされない理由は？
+3. 後でコードをリファクタリングするとき、テストがどう役立つか？
 
-## Extra Test Generation Prompt
+## 追加テスト生成プロンプト
 
 ```text
-Create 3 short code-reading questions about Julia package structure
-and testing.
+Julia のパッケージ構造とテストについて、
+短いコードリーディング問題を3つ作成してください。
 
-Focus on:
-- what module and export mean
-- why package structure helps
-- how tests document behavior
+以下に焦点を当ててください:
+- module と export の意味
+- パッケージ構造がなぜ役立つか
+- テストが動作をどう文書化するか
 
-Do not give answers yet.
-After I answer, grade my responses and give me 1 follow-up question.
+まだ答えは出さないでください。
+私が答えた後、回答を採点し、フォローアップ質問を1つ出してください。
 ```
 
-## Skip Condition
+## スキップ条件
 
-You may skip this step if you can already:
+以下がすでにできるなら、このステップはスキップできます:
 
-- explain why brainstorming before implementation helps
-- create a minimal Julia package structure
-- write basic tests using Julia's `Test` module
-- explain the difference between exported and private functions
+- 実装前のブレインストーミングがなぜ役立つか説明できる
+- 最小限の Julia パッケージ構造を作成できる
+- Julia の `Test` モジュールを使って基本的なテストを書ける
+- エクスポートされた関数と非公開関数の違いを説明できる

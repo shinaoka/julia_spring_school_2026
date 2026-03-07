@@ -1,31 +1,43 @@
 ---
-title: "Advanced Topic: What Is a Package and How Do You Build One?"
+title: "上級トピック: パッケージとは何か、どう作るか"
 ---
 
-This page is the next step after project environments: a short introduction to Julia **packages**.
+このページは、プロジェクト環境の次のステップとして、Julia の**パッケージ**を短く紹介します。
 
-## What Is a Package? The Minimum Picture
+## パッケージとは？ 最小限の全体像
 
-- A package bundles functionality into a reusable module
-- It has a `Project.toml` and can declare dependencies and compatibility constraints
-- Other projects can use it via `using` or `import`
+- パッケージは機能を再利用可能なモジュールにまとめたもの
+- `Project.toml` を持ち、依存関係と互換性の制約を宣言できる
+- 他のプロジェクトから `using` や `import` で使える
 
-## Look at a Sample
+## サンプルを見てみよう
 
-The sample repository used in the performance section (`julia_spring_school_2026_sample`) includes an example that packages an optimized `estimate_pi`. Open your fork and inspect `topics/package_dev/MonteCarloPi/`.
+パフォーマンスのセクションで使ったサンプルリポジトリ（`julia_spring_school_2026_sample`）をフォーク済みであれば、最適化された `estimate_pi` をパッケージ化した例が含まれています。フォークを開いて `topics/package_dev/MonteCarloPi/` を確認してください。
 
-### Directory Structure
+::: {.callout-tip}
+## サンプルリポジトリのフォーク
+
+まだフォークしていない場合は、[サンプルリポジトリ](https://github.com/shinaoka/julia_spring_school_2026_sample) のページで「Fork」ボタンを押してください。その後、ターミナルで以下を実行します:
+
+```sh
+gh repo clone <あなたのユーザー名>/julia_spring_school_2026_sample
+```
+:::
+
+フォークしていなくても、このページは最小限の Julia パッケージレイアウトのスタンドアロンな例として読めます。
+
+### ディレクトリ構成
 
 ```
 topics/package_dev/MonteCarloPi/
-├── Project.toml          # package metadata
+├── Project.toml          # パッケージメタデータ
 ├── src/
-│   └── MonteCarloPi.jl   # main module
+│   └── MonteCarloPi.jl   # メインモジュール
 └── test/
-    └── runtests.jl       # tests
+    └── runtests.jl       # テスト
 ```
 
-### `src/MonteCarloPi.jl`: The Module
+### `src/MonteCarloPi.jl`: モジュール
 
 ```julia
 module MonteCarloPi
@@ -35,7 +47,7 @@ export estimate_pi
 """
     estimate_pi(N::Int) -> Float64
 
-Estimate pi by Monte Carlo using `N` random points.
+モンテカルロ法で `N` 個のランダム点を使い円周率を推定する。
 """
 function estimate_pi(N::Int)
     count = 0
@@ -49,11 +61,11 @@ end
 end # module
 ```
 
-- `module MonteCarloPi ... end` creates a namespace
-- `export estimate_pi` declares the public API
-- Adding a docstring means `?estimate_pi` shows help in the REPL
+- `module MonteCarloPi ... end` で名前空間を作成
+- `export estimate_pi` で公開 API を宣言
+- docstring を追加すると、REPL で `?estimate_pi` とするとヘルプが表示される
 
-### `test/runtests.jl`: Tests
+### `test/runtests.jl`: テスト
 
 ```julia
 using MonteCarloPi
@@ -65,109 +77,115 @@ using Test
 end
 ```
 
-- `@testset` groups related tests
-- `≈` with `atol` checks approximate equality
+- `@testset` で関連するテストをグループ化
+- `≈` と `atol` で近似等値性を確認
 
-### `Project.toml`: Package Metadata
+### `Project.toml`: パッケージメタデータ
 
 ```toml
 name = "MonteCarloPi"
 uuid = "xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx"
 version = "0.1.0"
 
-[deps]
+[extras]
 Test = "8dfed614-e22c-5e08-85e1-65c5234f0b40"
+
+[targets]
+test = ["Test"]
 
 [compat]
 julia = "1.10"
 ```
 
-- `name`: package name, usually matching the module name
-- `uuid`: unique package identifier, generated automatically by `pkg> generate`
-- `version`: a semantic version number
-- `[compat]`: supported Julia version range
+- `name`: パッケージ名（通常はモジュール名と一致）
+- `uuid`: 一意なパッケージ識別子（`pkg> generate` で自動生成）
+- `version`: セマンティックバージョン番号
+- `[extras]` と `[targets]`: テスト専用の依存関係とテストターゲット
+- `[compat]`: サポートする Julia のバージョン範囲
 
-## Run the Tests
+## テストの実行
 
-You can run tests inside the `MonteCarloPi` directory of the sample repository.
+サンプルリポジトリの `MonteCarloPi` ディレクトリ内でテストを実行できます。
 
 ```sh
 cd julia_spring_school_2026_sample/topics/package_dev/MonteCarloPi
 julia --project=. -e 'using Pkg; Pkg.instantiate(); Pkg.test()'
 ```
 
-If you see output like `Test Summary: | Pass  Total`, the tests passed.
+`Test Summary: | Pass  Total` のような出力が表示されれば、テストは成功です。
 
-## Shortest Path to Creating One
+## パッケージを作る最短の道
 
-When you create your own package, it is fine to let an LLM handle most of the boilerplate: package skeleton, tests, and GitHub integration.
+自分でパッケージを作る際は、ボイラープレートの大部分（パッケージスケルトン、テスト、GitHub 連携）を LLM に任せて問題ありません。
 
-- Ask the LLM to create a minimal package skeleton with `src/` and `test/`
-- Ask the LLM to create a minimal `test/runtests.jl` using `Test` and `@testset`
-- Ask the LLM to commit and push, and optionally add GitHub Actions
+- LLM に `src/` と `test/` を含む最小限のパッケージスケルトンを作成してもらう
+- LLM に `Test` と `@testset` を使った最小限の `test/runtests.jl` を作成してもらう
+- LLM にコミット＆プッシュしてもらい、必要に応じて GitHub Actions を追加してもらう
 
-If you want to do it manually, you can create a skeleton in Pkg mode with `pkg> generate MonteCarloPi`.
+手動で行いたい場合は、Pkg モードで `pkg> generate MonteCarloPi` とするとスケルトンを作成できます。
 
-## Example Prompts for the LLM
+## LLM 用のプロンプト例
 
-- "Turn `estimate_pi` into a `MonteCarloPi` package. Put the module in `src/MonteCarloPi.jl`, write tests in `test/runtests.jl`, and make sure `pkg> test` passes."
-- "Add a docstring so that `?estimate_pi` shows useful help."
-- "Add CI with GitHub Actions so that `Pkg.test()` runs automatically."
+- 「`estimate_pi` を `MonteCarloPi` パッケージにしてください。モジュールを `src/MonteCarloPi.jl` に、テストを `test/runtests.jl` に書いて、`pkg> test` が通るようにしてください。」
+- 「docstring を追加して、`?estimate_pi` で有用なヘルプが表示されるようにしてください。」
+- 「GitHub Actions で CI を追加して、`Pkg.test()` が自動的に実行されるようにしてください。」
 
-## Another Example: `TwoDimIsingSolver`
+## もう一つの例: `TwoDimIsingSolver`
 
-The Ising-model code from this course can also be turned into a package. Compared with `MonteCarloPi`:
+この講義のイジングモデルのコードもパッケージにできます。`MonteCarloPi` と比較すると:
 
-- **MonteCarloPi**: a simple package centered on one function
-- **TwoDimIsingSolver**: a package with multiple functions and structs such as `Accumulator`
+- **MonteCarloPi**: 1つの関数を中心としたシンプルなパッケージ
+- **TwoDimIsingSolver**: 複数の関数と `Accumulator` のような struct を含むパッケージ
 
-### Prompt Example
-
-```
-Turn my Ising-model Metropolis code (`metropolis_step!`, `magnetization`,
-`run_ising`, `Accumulator`) into a `TwoDimIsingSolver` package.
-
-- Define the module in `src/TwoDimIsingSolver.jl`
-- Export: `run_ising`, `magnetization`, `Accumulator`
-- Add tests in `test/runtests.jl`:
-  - low temperature (`β=0.6`) should give `⟨M²⟩ > 0.8`
-  - high temperature (`β=0.2`) should give `⟨M²⟩ < 0.3`
-- Make sure `Pkg.test()` passes
-```
-
-### Points to Notice
-
-- As packages grow, split `src/` into multiple files and load them with `include`
-- Use `export` to choose the public API; helper functions do not need to be exported
-- In tests, check physically meaningful behavior, not only syntax
-
-## Minimum Checklist
-
-- `using MonteCarloPi` works in the activated environment
-- `pkg> test` passes
-- As an advanced version, `TwoDimIsingSolver` can also be packaged and tested
-- You can commit and push the changes
-
-## Advanced: Run Tests Automatically with CI
-
-### What Are CI and GitHub Actions?
-
-**CI (Continuous Integration)** means automatically running tests or builds whenever code is pushed. On GitHub, this is commonly done with **GitHub Actions**.
-
-- Put a YAML file under `.github/workflows/`, and GitHub will run jobs on push or pull request
-- A passing workflow shows a green check; a failing one shows a red cross
-- This helps prevent "works on my machine" problems
-
-### Let the LLM Create the CI File
-
-**Prompt example:**
+### プロンプト例
 
 ```
-Add a GitHub Actions CI workflow for `topics/package_dev/MonteCarloPi` in this repository.
-Write `.github/workflows/ci.yml` so that every push runs `Pkg.test()` with Julia 1.10.
+イジングモデルのメトロポリスコード（metropolis_step!、magnetization、
+run_ising、Accumulator）を TwoDimIsingSolver パッケージにしてください。
+
+- モジュールを src/TwoDimIsingSolver.jl に定義
+- エクスポート: run_ising、magnetization、Accumulator
+- test/runtests.jl にテストを追加:
+  - 低温（β=0.6）では ⟨M²⟩ > 0.8 であること
+  - 高温（β=0.2）では ⟨M²⟩ < 0.3 であること
+- Pkg.test() が通ること
 ```
 
-The generated YAML will typically look like this:
+### 注意点
+
+- パッケージが大きくなったら、`src/` を複数ファイルに分割し `include` で読み込む
+- `export` で公開 API を選択する。ヘルパー関数はエクスポート不要
+- テストでは構文だけでなく、物理的に意味のある動作をチェックする
+
+## 最低限のチェックリスト
+
+- アクティブ化した環境で `using MonteCarloPi` が動作する
+- `pkg> test` が通る
+- 上級版として、`TwoDimIsingSolver` もパッケージ化・テスト可能
+- 変更をコミット＆プッシュできる
+
+## 発展: CI による自動テスト
+
+### CI と GitHub Actions とは？
+
+**CI（継続的インテグレーション）**とは、コードがプッシュされるたびに自動的にテストやビルドを実行することです。GitHub では一般的に **GitHub Actions** で行います。
+
+- `.github/workflows/` 以下に YAML ファイルを置くと、プッシュやプルリクエストでジョブが実行される
+- テストが通るとグリーンチェック、失敗するとレッドクロスが表示される
+- 「自分のマシンでは動くのに」問題を防げる
+
+### LLM に CI ファイルを作ってもらう
+
+**プロンプト例:**
+
+```
+このリポジトリの topics/package_dev/MonteCarloPi に
+GitHub Actions の CI ワークフローを追加してください。
+プッシュのたびに Julia 1.10 で Pkg.test() が実行されるように
+.github/workflows/ci.yml を書いてください。
+```
+
+生成される YAML は通常以下のようになります:
 
 ```yaml
 name: CI
@@ -186,8 +204,8 @@ jobs:
           julia --project=. -e 'using Pkg; Pkg.instantiate(); Pkg.test()'
 ```
 
-You do not need to understand every detail of the YAML. For this course, it is enough to know that an LLM can generate a usable starting point.
+YAML のすべての詳細を理解する必要はありません。この講義では、LLM が使える出発点を生成できることを知っていれば十分です。
 
-## Final Question
+## 最後の問い
 
-**What is the same about a project and a package, and what is different?**
+**プロジェクトとパッケージの共通点は何か、違いは何か？**

@@ -1,72 +1,74 @@
 ---
-title: "Step 3: Implement the Metropolis Update"
+title: "Step 3: メトロポリス更新の実装"
 ---
 
-This step is the conceptual center of the lecture.
+このステップは講義の概念的な中心です。
 
-## Purpose
+## 目的
 
-Implement one Metropolis update step and use AI to understand a new algorithm through dialogue.
+メトロポリス更新を1ステップ実装し、AI との対話を通じて新しいアルゴリズムを理解します。
 
-## Target Outcome
+## 到達目標
 
-By the end of this step, you should have:
+このステップの終わりまでに、以下ができていること:
 
-- a working Metropolis update
-- a basic simulation loop
-- a verbal explanation of why the acceptance rule looks the way it does
-- a rough understanding of how this differs from heat-bath updates
+- 動作するメトロポリス更新がある
+- 基本的なシミュレーションループがある
+- 受容規則がなぜそのような形をしているかの言葉での説明ができる
+- ヒートバス更新との違いの大まかな理解がある
 
-## Why This Step Matters
+## なぜこのステップが重要か
 
-The Metropolis method is a good example of what AI should help you do.
+メトロポリス法は、AI に手伝ってもらうべきことの好例です。
 
-The main value is not that AI can generate the code quickly. The main value is that AI can help you understand:
+主な価値は、AI がコードを素早く生成できることではありません。主な価値は、AI が以下を理解する手助けをしてくれることです:
 
-- what the state of the system is
-- what one update attempt changes
-- why we compute an energy difference `ΔE`
-- why lower-energy proposals are always accepted
-- why higher-energy proposals are accepted only probabilistically
-- which part of the code is the core algorithmic idea
+- システムの状態とは何か
+- 1回の更新試行で何が変わるか
+- なぜエネルギー差 `ΔE` を計算するのか
+- なぜエネルギーが下がる提案は常に受容されるのか
+- なぜエネルギーが上がる提案は確率的にしか受容されないのか
+- コードのどの部分がアルゴリズムの核心か
 
-## Prompt to Give the AI
+## AI に渡すプロンプト
 
 ```text
-I am learning the Metropolis update for the 2D Ising model in Julia.
+Julia での 2次元イジングモデルのメトロポリス更新を学んでいます。
 
-Before writing code, explain the algorithm in a beginner-friendly way.
-Please distinguish clearly between:
+コードを書く前に、初学者向けにアルゴリズムを説明してください。
+以下を明確に区別してください:
 
-- the state of the system
-- what one update attempt does
-- why we compute the energy difference ΔE
-- why lower-energy moves are accepted immediately
-- why higher-energy moves are accepted with probability exp(-beta * ΔE)
-- which part of the code is the core of the algorithm
+- システムの状態
+- 1回の更新試行が何をするか
+- なぜエネルギー差 ΔE を計算するのか
+- なぜエネルギーが下がる動きは即座に受容されるのか
+- なぜエネルギーが上がる動きは確率 exp(-beta * ΔE) で受容されるのか
+- コードのどの部分がアルゴリズムの核心か
 
-Then compare the Metropolis method with the heat-bath method.
+次にメトロポリス法とヒートバス法を比較してください。
 
-Please explain:
-- what Metropolis proposes
-- what it accepts or rejects
-- what heat-bath samples directly
-- how the code structure would differ
-- what both methods are trying to achieve
+以下を説明してください:
+- メトロポリスが何を提案するか
+- 何を受容または棄却するか
+- ヒートバスが何を直接サンプルするか
+- コードの構造がどう異なるか
+- 両方の方法が何を達成しようとしているか
 
-Keep the math light. Focus on intuition and algorithmic meaning.
-After that, give me one small implementation step at a time instead of a full solution at once.
+数学は軽めにしてください。直感とアルゴリズムの意味に焦点を当ててください。
+その後、完全な解答を一度に出すのではなく、1つずつ小さな実装ステップを示してください。
 ```
 
-## Concepts to Acquire
+## 習得する概念
 
-- proposal and acceptance
-- energy difference `ΔE`
-- one Monte Carlo sweep
-- probabilistic acceptance
-- Metropolis vs heat-bath
+- 提案と受容
+- エネルギー差 `ΔE`
+- 1モンテカルロスイープ
+- 確率的受容
+- メトロポリス vs ヒートバス
 
-## A Minimal Version
+## 最小限のバージョン
+
+前のステップと同様に、このコードは `J = 1` の慣習を使っているため、`dE` は結合定数なしで書かれています。
 
 ```julia
 function metropolis_step!(spins, beta)
@@ -84,18 +86,24 @@ function metropolis_step!(spins, beta)
 end
 ```
 
-## Compare Update Rules
+::: {.callout-note}
+## `dE = 2 * spins[i,j] * nn` の意味
 
-Use AI to explain the difference between these two ideas:
+スピン $s_i$ を反転すると $s_i \to -s_i$ になるため、そのスピンと近接スピンとの相互作用エネルギーの符号が反転します。エネルギー変化は $\Delta E = 2 s_i \sum_{\text{nn}} s_j$ となります。`nn` は4つの近接スピンの和なので、`dE = 2 * spins[i,j] * nn` はまさにこの式を計算しています。
+:::
 
-- `Metropolis`: propose a flip, then accept or reject it
-- `Heat-bath`: sample the new spin directly from the local conditional distribution
+## 更新規則の比較
 
-You do not need to fully implement both methods in this lecture. You do need to understand the difference in update logic.
+AI を使って、以下の2つのアイデアの違いを説明してもらいましょう:
 
-## Code-Reading Check
+- `メトロポリス`: 反転を提案し、受容するか棄却する
+- `ヒートバス`: 局所的な条件付き分布から新しいスピンの値を直接サンプルする
 
-Read this fragment:
+この講義で両方を完全に実装する必要はありません。更新ロジックの違いを理解する必要があります。
+
+## コードリーディング確認
+
+以下のコード断片を読んでください:
 
 ```julia
 dE = 2 * spins[i, j] * nn
@@ -104,32 +112,34 @@ if dE <= 0 || rand() < exp(-beta * dE)
 end
 ```
 
-Answer:
+以下の質問に答えてください:
 
-1. What is `dE` describing?
-2. Why are some moves accepted with probability less than 1?
-3. Which line contains the essential Metropolis acceptance logic?
+1. `dE` は何を表しているか？
+2. なぜ一部の動きは確率1未満で受容されるのか？
+3. メトロポリスの受容ロジックの本質を含む行はどれか？
 
-## Extra Test Generation Prompt
+## 追加テスト生成プロンプト
 
 ```text
-Create 3 short code-reading questions about the Metropolis method for the 2D Ising model.
+2次元イジングモデルのメトロポリス法について、
+短いコードリーディング問題を3つ作成してください。
 
-Conditions:
-- 1 question should ask about the meaning of the algorithm
-- 1 question should ask about the acceptance rule
-- 1 question should ask about a likely bug or improvement in the code
-- do not give the answers yet
-- after I answer, grade my responses and give me 1 follow-up question
+条件:
+- 1問はアルゴリズムの意味を問う
+- 1問は受容規則を問う
+- 1問はコードのバグや改善点を問う
+- まだ答えは出さないでください
+- 私が答えた後、回答を採点し、フォローアップ質問を1つ出してください
 
-Then create 2 additional short conceptual questions comparing Metropolis and heat-bath updates.
-Focus on the difference in update logic, not long calculations.
+次に、メトロポリスとヒートバス更新を比較する短い概念的な質問を
+2つ追加で作成してください。
+更新ロジックの違いに焦点を当て、長い計算は不要です。
 ```
 
-## Skip Condition
+## スキップ条件
 
-You may skip this step if you can already:
+以下がすでにできるなら、このステップはスキップできます:
 
-- explain the Metropolis update in words
-- identify the acceptance rule in code
-- explain the main difference between proposal-and-rejection and direct conditional sampling
+- メトロポリス更新を言葉で説明できる
+- コード中の受容規則を特定できる
+- 提案・棄却方式と直接的な条件付きサンプリングの主な違いを説明できる

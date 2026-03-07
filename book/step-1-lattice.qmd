@@ -1,79 +1,87 @@
 ---
-title: "Step 1: Create the Lattice"
+title: "Step 1: 格子の作成"
 ---
 
-Now build the smallest possible state for a 2D Ising model.
+2次元イジングモデルの最小の状態を構築します。
 
-## What Is The 2D Ising Model?
+## 2次元イジングモデルとは？
 
-The 2D Ising model is a simple model of magnetism on a square lattice.
+2次元イジングモデルは、正方格子上の磁性の単純なモデルです。
 
-- each site carries a spin `s_i = ±1`
-- neighboring spins prefer to align
-- temperature competes with that tendency
+- 各サイトはスピン `s_i = ±1` を持つ
+- 隣接するスピンは揃おうとする
+- 温度がその傾向と競合する
 
-One standard form of the energy is
+エネルギーの標準的な形の一つは
 
 ```math
 H = -J \sum_{\langle i, j \rangle} s_i s_j
 ```
 
-where `s_i = ±1` and the sum runs over nearest-neighbor pairs.
+ここで `s_i = ±1` で、和は最近接対について取ります。
 
-At low temperature, aligned spins are favored, so large ordered domains tend to appear. At high temperature, thermal fluctuations are stronger, so the spins look more disordered. In an infinite system, this model has a phase transition at a critical temperature `T_c`. In this lecture, you will not try to derive that result from theory. Instead, you will build a small simulation and later check that your numerical results are not obviously inconsistent with the exact `T_c`.
+以降、一般的な簡略化の慣習として `J = 1` を使います。そのため、後のエネルギーや `ΔE` のコードには `J` の明示的な因子は現れません。
 
-## Purpose
+低温では揃ったスピンが有利なので、大きな秩序ドメインが現れる傾向があります。高温では熱揺らぎが強くなり、スピンはよりランダムに見えます。無限系では、このモデルは臨界温度 `T_c` で相転移を持ちます。この講義では、理論からその結果を導くことはしません。代わりに、小さなシミュレーションを構築し、数値結果が厳密な `T_c` と明らかに矛盾しないことを後で確認します。
 
-Represent the spin configuration as a 2D Julia array and initialize it.
+## 目的
 
-## Concepts You Will Use
+スピン配置を 2 次元の Julia 配列として表現し、初期化します。
 
-If you read the Julia Syntax Quickstart page, you already know about arrays and functions. In this step, you will:
+## 使う概念
 
-- create a 2D array to represent the spin lattice
-- write a function that initializes that array
+Julia 文法クイックスタートを読んでいれば、配列と関数についてすでに知っています。このステップでは:
 
-If you skipped the quickstart, here is the minimum you need:
+- スピン格子を表す 2 次元配列を作成する
+- その配列を初期化する関数を書く
 
-- An array stores many values together. A 2D array is like a matrix.
-- A function takes input, does computation, and returns output.
-- Julia uses 1-based indexing (arrays start at 1, not 0).
+クイックスタートをスキップした場合、最低限必要なことは:
 
-## Target Outcome
+- 配列は多くの値をまとめて格納する。2次元配列は行列のようなもの。
+- 関数は入力を受け取り、計算を行い、出力を返す。
+- Julia は 1-based インデックス（配列は 0 ではなく 1 から始まる）。
 
-By the end of this step, you should have:
+## 到達目標
 
-- a function that creates an `L x L` lattice
-- spins stored as `+1` and `-1`
-- a clear reason for putting initialization inside a function
+このステップの終わりまでに、以下ができていること:
 
-## Prompt to Give the AI
+- `L x L` の格子を作成する関数がある
+- スピンは `+1` と `-1` で格納されている
+- 初期化を関数に入れる理由が明確になっている
+
+::: {.callout-tip}
+## コードの保存先について
+
+このステップ以降、AI に生成してもらったコードは `ising.jl` のようなファイルに保存しておくと便利です。REPL に直接打ち込むだけだと、セッションを閉じたときにコードが消えてしまいます。Step 5.5 でパッケージ構造に整理するまでは、1つのファイルにまとめておけば十分です。
+:::
+
+## AI に渡すプロンプト
 
 ```text
-I want to create the state of a 2D Ising model in Julia.
+Julia で 2次元イジングモデルの状態を作りたいです。
 
-Please help me write a small function that:
-- takes the lattice size L
-- returns an L x L matrix
-- stores spins as +1 and -1
-- uses simple Julia code that a beginner can read
+以下のような小さな関数を書くのを手伝ってください:
+- 格子サイズ L を受け取る
+- L x L の行列を返す
+- スピンを +1 と -1 で格納する
+- 初学者が読める簡単な Julia コードにする
 
-Before giving code, explain:
-- why a matrix is a natural representation
-- why the initialization should be in a function
-- what element type would be reasonable
+コードを出す前に、以下を説明してください:
+- なぜ行列が自然な表現なのか
+- なぜ初期化を関数に入れるべきか
+- どの要素型が妥当か
 
-Then give one small implementation step at a time.
+その後、一度に1つずつ小さな実装ステップを示してください。
 ```
 
-## Concepts to Acquire
+## 習得する概念
 
-- matrix as system state
-- random initialization
-- function-based initialization
-- element type choices such as `Int8` or `Int`
+- システム状態としての行列
+- ランダム初期化
+- 関数ベースの初期化
+- `Int8` や `Int` などの要素型の選択
 
-## A Minimal Version
+## 最小限のバージョン
 
 ```julia
 function initialize_spins(L::Int)
@@ -81,7 +89,7 @@ function initialize_spins(L::Int)
 end
 ```
 
-Try:
+試してみましょう:
 
 ```julia
 spins = initialize_spins(8)
@@ -89,39 +97,40 @@ size(spins)
 eltype(spins)
 ```
 
-## Code-Reading Check
+## コードリーディング確認
 
-Read this code and explain what it does.
+以下のコードを読んで、何をしているか説明してください。
 
 ```julia
 L = 8
 spins = rand(Int8[-1, 1], L, L)
 ```
 
-Then answer:
+そして以下の質問に答えてください:
 
-1. What is stored in `spins`?
-2. Why might it be better to wrap this in `initialize_spins(L)`?
-3. What part of the code would be harder to reuse if it stayed at global scope?
+1. `spins` には何が格納されているか？
+2. これを `initialize_spins(L)` でラップした方が良い理由は？
+3. グローバルスコープに置いたままだと、コードのどの部分が再利用しにくくなるか？
 
-## Extra Test Generation Prompt
+## 追加テスト生成プロンプト
 
 ```text
-Create 3 short code-reading questions about initializing a 2D Ising lattice in Julia.
+Julia で 2次元イジング格子を初期化することについて、
+短いコードリーディング問題を3つ作成してください。
 
-Focus on:
-- what the code is storing
-- what the function returns
-- why wrapping logic in a function is useful
+以下に焦点を当ててください:
+- コードが何を格納しているか
+- 関数が何を返すか
+- ロジックを関数にラップすることがなぜ有用か
 
-Do not give answers yet.
-After I answer, grade my responses and give me 1 follow-up question.
+まだ答えは出さないでください。
+私が答えた後、回答を採点し、フォローアップ質問を1つ出してください。
 ```
 
-## Skip Condition
+## スキップ条件
 
-You may skip this step if you can already:
+以下がすでにできるなら、このステップはスキップできます:
 
-- write a function that returns an `L x L` spin matrix
-- explain why function scope is preferable here
-- read simple Julia array initialization without help
+- `L x L` のスピン行列を返す関数を書ける
+- ここで関数スコープが望ましい理由を説明できる
+- 簡単な Julia の配列初期化を助けなしで読める

@@ -1,110 +1,121 @@
 ---
-title: "Step 0: Create the Project and Environment"
+title: "Step 0: プロジェクトと環境の作成"
 ---
 
-This step is about starting a Julia project in a way that works well with AI, Git, and GitHub, while remaining reproducible.
+このステップでは、AI・Git・GitHub と連携しやすく、再現性のある形で Julia プロジェクトを始めます。
 
-## Purpose
+## 目的
 
-Create a local project folder, initialize Git, prepare AI instruction files, upload the repository to GitHub, and create a Julia project environment.
+ローカルにプロジェクトフォルダを作成し、Git を初期化し、AI 向けの指示ファイルを用意し、GitHub にリポジトリをアップロードし、Julia のプロジェクト環境を作成します。
 
-## Target Outcome
+## 到達目標
 
-By the end of this step, you should have:
+このステップの終わりまでに、以下が揃っていること:
 
-- a local project directory on your machine
-- a Julia-oriented `.gitignore`
-- a local Git repository
-- `AGENTS.md` and `CLAUDE.md`
-- a public GitHub repository for the project
-- a `Project.toml`
-- a `Manifest.toml`
-- a working Julia project environment
-- a basic explanation of what `git init` does
-- a basic explanation of what `gh repo create` does
-- a basic explanation of what `Pkg.activate(".")` does
+- ローカルのプロジェクトディレクトリ
+- Julia 向けの `.gitignore`
+- ローカル Git リポジトリ
+- `AGENTS.md` と `CLAUDE.md`
+- GitHub 上の公開リポジトリ
+- `Project.toml`
+- `Manifest.toml`
+- 動作する Julia プロジェクト環境
+- `git init` が何をするかの基本的な説明
+- `gh repo create` が何をするかの基本的な説明
+- `Pkg.activate(".")` が何をするかの基本的な説明
 
-## Before You Ask AI
+## AI に聞く前に
 
-First, the student should create a project folder and move into it.
+まず、受講者自身でプロジェクトフォルダを作成し、その中に移動してください。
 
 ```bash
 mkdir ising-project
 cd ising-project
 ```
 
-If GitHub CLI is not authenticated yet, do this once before continuing:
+GitHub CLI の認証がまだの場合は、先に以下を実行してください:
 
 ```bash
 gh auth login
 ```
 
-## Concepts to Acquire
+## 習得する概念
 
 - `.gitignore`
 - `git init`
-- local repository vs remote repository
+- ローカルリポジトリとリモートリポジトリ
 - `gh repo create`
-- project environment vs global environment
+- プロジェクト環境 vs グローバル環境
 - `Project.toml`
 - `Manifest.toml`
 - `Pkg.activate(".")`
 - `Pkg.add(...)`
-- reproducibility
+- 再現性
 
-## Execution Spell 1: Local Git and AI Files
+## AGENTS.md と CLAUDE.md について
 
-```text
-In this project directory, create a Julia-oriented .gitignore,
-initialize a git repository, create AGENTS.md with the AI workflow
-rules for this course, and create CLAUDE.md containing only @AGENTS.md.
-Show me the exact contents of the new files.
-```
+これから作成する `AGENTS.md` と `CLAUDE.md` は、**AI アシスタントに対するプロジェクト固有の指示ファイル**です。AI がプロジェクトのコードを操作する際に、ここに書かれたルールに従うようになります。`AGENTS.md` に実際のルールを書き、`CLAUDE.md` は `@AGENTS.md` と書くだけで `AGENTS.md` を参照します。このパターンにより、複数の AI ツール（Claude Code、Cursor など）で共通のルールを使えます。
 
-## Explanation Spell 1
+## 実行スペル 1: ローカル Git と AI 指示ファイル
+
+以下のプロンプトを AI に貼り付けてください。
 
 ```text
-Explain what you just did. Describe what .gitignore is for,
-what git init changed, why AGENTS.md contains the real rules,
-why CLAUDE.md is minimal, and how I can verify the repository
-state locally.
+このプロジェクトディレクトリで、Julia向けの .gitignore を作成し、
+git リポジトリを初期化し、この講義の AI ワークフロールールを含む
+AGENTS.md を作成し、@AGENTS.md とだけ書いた CLAUDE.md を作成してください。
+新しいファイルの正確な内容を見せてください。
 ```
 
-## Execution Spell 2: Julia Environment
+## 説明スペル 1
+
+実行スペル 1 の後に、以下を AI に貼り付けてください。
 
 ```text
-Create a new Julia environment in the current working directory. Add BenchmarkTools and Plots as dependencies.
+今やったことを説明してください。.gitignore の役割、git init で何が変わったか、
+AGENTS.md に実際のルールがある理由、CLAUDE.md が最小限な理由、
+ローカルでリポジトリの状態を確認する方法を教えてください。
 ```
 
-## Explanation Spell 2
+## 実行スペル 2: Julia 環境
 
 ```text
-Explain what you just did. Describe which files were created
-or updated, what each command or package operation means,
-whether the project environment or the global environment changed,
-and how I can verify the result.
+カレントディレクトリに新しい Julia 環境を作成してください。
+BenchmarkTools と Plots を依存パッケージとして追加してください。
 ```
 
-## Execution Spell 3: GitHub Upload
+## 説明スペル 2
+
+実行スペル 2 の後に、以下を AI に貼り付けてください。
 
 ```text
-Using gh, create a new public GitHub repository for this local project,
-make an initial commit, and push the current branch.
-Use a reasonable repository name based on the current folder.
+今やったことを説明してください。どのファイルが作成または更新されたか、
+各コマンドやパッケージ操作の意味、プロジェクト環境とグローバル環境の
+どちらが変更されたか、結果を確認する方法を教えてください。
 ```
 
-## Explanation Spell 3
+## 実行スペル 3: GitHub へのアップロード
 
 ```text
-Explain what you just did. Describe the difference between the local
-git repository and the remote GitHub repository, what files were committed,
-what gh repo create did, and how I can verify that the repository
-is now published.
+gh を使って、このローカルプロジェクトの新しい公開 GitHub リポジトリを作成し、
+最初のコミットを行い、現在のブランチをプッシュしてください。
+現在のフォルダ名に基づいた適切なリポジトリ名を使ってください。
 ```
 
-## What This Is For
+## 説明スペル 3
 
-One reasonable sequence looks like this:
+実行スペル 3 の後に、以下を AI に貼り付けてください。
+
+```text
+今やったことを説明してください。ローカルの git リポジトリと
+リモートの GitHub リポジトリの違い、コミットされたファイル、
+gh repo create が何をしたか、リポジトリが公開されたことを
+確認する方法を教えてください。
+```
+
+## この操作の意味
+
+一つの妥当な手順は以下のようになります:
 
 ```bash
 mkdir ising-project
@@ -119,42 +130,42 @@ Pkg.add(["BenchmarkTools", "Plots"])
 Pkg.status()
 ```
 
-The intended usage is:
+想定される使い方:
 
-1. create the folder yourself
-2. paste one execution spell into the AI
-3. let the AI carry out that setup task
-4. paste the matching explanation spell
-5. confirm that you understand what changed
-6. continue to the next spell
+1. 自分でフォルダを作成する
+2. 実行スペルを AI に貼り付ける
+3. AI にそのセットアップタスクを実行してもらう
+4. 対応する説明スペルを貼り付ける
+5. 何が変わったかを理解したことを確認する
+6. 次のスペルに進む
 
-In this example, the commands do the following:
+この例では、各コマンドは以下のことを行います:
 
-- `mkdir ising-project`: create a new working directory for the project
-- `cd ising-project`: move into that directory before creating the Julia environment
-- `git init`: create a local Git repository in the current folder
-- `using Pkg`: load Julia's package manager
-- `Pkg.activate(".")`: treat the current directory as the active project environment
-- `Pkg.add(["BenchmarkTools", "Plots"])`: add the required packages to this project
-- `Pkg.status()`: confirm which environment is active and which packages are installed
+- `mkdir ising-project`: プロジェクト用の新しい作業ディレクトリを作成
+- `cd ising-project`: Julia 環境を作成する前にそのディレクトリに移動
+- `git init`: カレントフォルダにローカル Git リポジトリを作成
+- `using Pkg`: Julia のパッケージマネージャを読み込み
+- `Pkg.activate(".")`: カレントディレクトリをアクティブなプロジェクト環境として設定
+- `Pkg.add(["BenchmarkTools", "Plots"])`: 必要なパッケージをこのプロジェクトに追加
+- `Pkg.status()`: どの環境がアクティブで、どのパッケージがインストールされているか確認
 
-After this setup, check that:
+セットアップ後、以下を確認してください:
 
-- `.git` exists
-- `.gitignore` exists
-- `AGENTS.md` exists
-- `CLAUDE.md` exists
-- `Project.toml` exists
-- `Manifest.toml` exists
-- the repository exists on GitHub
+- `.git` が存在する
+- `.gitignore` が存在する
+- `AGENTS.md` が存在する
+- `CLAUDE.md` が存在する
+- `Project.toml` が存在する
+- `Manifest.toml` が存在する
+- GitHub 上にリポジトリが存在する
 
-## Code-Reading Check
+## コードリーディング確認
 
-Read the following and explain what each part is modifying.
+以下を読んで、各部分が何を変更しているか説明してください。
 
 ```text
 git init
-gh repo create my-julia-project --public
+gh repo create my-julia-project --public --source=. --remote=origin --push
 ```
 
 ```julia
@@ -163,38 +174,47 @@ Pkg.activate(".")
 Pkg.add("BenchmarkTools")
 ```
 
-Then answer:
+そして以下の質問に答えてください:
 
-1. What is the difference between `git init` and `gh repo create`?
-2. Does `Pkg.add("BenchmarkTools")` here modify the current project or the global environment?
-3. What is the difference between `Project.toml` and `Manifest.toml` here?
-4. Why is this better than doing all work in `@v1.x` without a repository?
+1. `git init` と `gh repo create` の違いは何か？
+2. ここでの `Pkg.add("BenchmarkTools")` は現在のプロジェクトとグローバル環境のどちらを変更するか？
+3. ここでの `Project.toml` と `Manifest.toml` の違いは何か？
+4. リポジトリなしで `@v1.x` ですべての作業を行うよりも、なぜこの方法が良いのか？
 
-## Extra Test Generation Prompt
+この例では、`gh repo create ... --source=. --remote=origin` は以下を意味します:
+
+- 現在のローカルプロジェクトの GitHub リポジトリを作成する
+- その GitHub リポジトリを `origin` としてローカルリポジトリに接続する
+- オプションで、現在のブランチを即座にプッシュする
+
+正確なフラグよりも、ワークフローのアイデアが重要です: ローカルで初期化済みのリポジトリを公開しているのであって、無関係なリモートを別に作っているわけではありません。
+
+## 追加テスト生成プロンプト
 
 ```text
-Create 4 short code-reading questions about project setup for a Julia repository.
+Julia リポジトリのプロジェクトセットアップについて、
+短いコードリーディング問題を4つ作成してください。
 
-Focus on:
-- what .gitignore does
-- what git init changes
-- what gh repo create does
-- project environment vs global environment
+以下に焦点を当ててください:
+- .gitignore の役割
+- git init で変わること
+- gh repo create の動作
+- プロジェクト環境 vs グローバル環境
 - Project.toml vs Manifest.toml
-- what Pkg.activate(".") does
+- Pkg.activate(".") の動作
 
-Do not give answers yet.
-After I answer, grade my responses and give me 1 follow-up question.
+まだ答えは出さないでください。
+私が答えた後、回答を採点し、フォローアップ質問を1つ出してください。
 ```
 
-## Skip Condition
+## スキップ条件
 
-You may skip this step if you can already explain:
+以下をすでに説明できるなら、このステップはスキップできます:
 
-- why a repository should usually have a .gitignore
-- what a local git repository is
-- what is created on GitHub by gh repo create
-- when to use a project environment
-- what gets recorded in `Project.toml`
-- what gets locked in `Manifest.toml`
-- why AI-generated setup commands should be run inside the project, not blindly in the global environment
+- リポジトリに通常 .gitignore が必要な理由
+- ローカル git リポジトリとは何か
+- gh repo create で GitHub に何が作られるか
+- プロジェクト環境を使うべき場面
+- `Project.toml` に何が記録されるか
+- `Manifest.toml` に何がロックされるか
+- AI が生成したセットアップコマンドを、グローバル環境ではなくプロジェクト内で実行すべき理由

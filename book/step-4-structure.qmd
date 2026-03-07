@@ -1,45 +1,46 @@
 ---
-title: "Step 4: Organize State and Code Structure"
+title: "Step 4: 状態とコード構造の整理"
 ---
 
-Once the simulation works, improve the shape of the code.
+シミュレーションが動くようになったら、コードの形を整えます。
 
-## Purpose
+## 目的
 
-Use `struct` and better function boundaries to make the simulation easier to read, explain, and extend.
+`struct` とより明確な関数の境界を使って、シミュレーションを読みやすく、説明しやすく、拡張しやすくします。
 
-## Target Outcome
+## 到達目標
 
-By the end of this step, you should have:
+このステップの終わりまでに、以下ができていること:
 
-- a clearer representation of simulation state
-- fewer loose variables
-- functions with cleaner interfaces
+- シミュレーション状態のより明確な表現がある
+- ばらばらの変数が減っている
+- よりきれいなインターフェースを持つ関数がある
 
-## Prompt to Give the AI
+## AI に渡すプロンプト
 
 ```text
-My Ising simulation now works, but the code feels scattered.
-I want to organize the state better in Julia.
+イジングシミュレーションは動くようになりましたが、
+コードが散らばっている感じがします。
+Julia で状態をもっとうまく整理したいです。
 
-Please explain first:
-- when it is useful to introduce a struct
-- what information should belong in the simulation state
-- how function signatures may improve after grouping related data
+まず以下を説明してください:
+- struct を導入すると便利な場面
+- どの情報がシミュレーション状態に含まれるべきか
+- 関連データをまとめた後、関数のシグネチャがどう改善されるか
 
-Then help me redesign the code in a minimal way.
-Do not over-engineer it.
-Keep the code readable for a beginner.
+その後、最小限の方法でコードを再設計する手助けをしてください。
+過剰な設計は避けてください。
+初学者が読めるコードにしてください。
 ```
 
-## Concepts to Acquire
+## 習得する概念
 
 - `struct`
-- grouping related state
-- simplifying function signatures
-- separating data from operations
+- 関連する状態のグループ化
+- 関数シグネチャの簡略化
+- データと操作の分離
 
-## A Minimal Version
+## 最小限のバージョン
 
 ```julia
 struct IsingModel
@@ -52,11 +53,19 @@ function magnetization(model::IsingModel)
 end
 ```
 
-This is not the only good design. The point is to make the role of each value clearer.
+これが唯一の良い設計ではありません。ポイントは各値の役割を明確にすることです。
 
-## Code-Reading Check
+::: {.callout-note}
+## `struct` と `mutable struct` の違い
 
-Read this:
+Julia のデフォルトの `struct` は **immutable**（不変）です。つまり、一度作成したら `model.beta = 0.5` のようにフィールドを書き換えることはできません。ただし、`spins` フィールドが配列の場合、**配列の中身**（`model.spins[i,j]`）は変更できます。参照先のオブジェクト自体は変わりませんが、その内容は変えられるということです。
+
+温度を変えたい場合は、新しい `IsingModel` を作り直すか、`mutable struct` を使います。この講義では、Step 6 の温度スキャンでは `struct` を使わずにシンプルに変数を渡す方法も紹介します。
+:::
+
+## コードリーディング確認
+
+以下を読んでください:
 
 ```julia
 struct IsingModel
@@ -65,30 +74,31 @@ struct IsingModel
 end
 ```
 
-Answer:
+以下の質問に答えてください:
 
-1. What information is grouped here?
-2. Which function arguments might become unnecessary after this change?
-3. Why might this be easier to explain to AI and to other humans?
+1. ここでどの情報がグループ化されているか？
+2. この変更後、どの関数引数が不要になる可能性があるか？
+3. AI や他の人に説明しやすくなるのはなぜか？
 
-## Extra Test Generation Prompt
+## 追加テスト生成プロンプト
 
 ```text
-Create 3 short code-reading questions about using a struct to organize the state of a 2D Ising model in Julia.
+Julia で struct を使って 2次元イジングモデルの状態を整理することについて、
+短いコードリーディング問題を3つ作成してください。
 
-Focus on:
-- what information belongs in the struct
-- how function signatures change
-- why this improves code clarity
+以下に焦点を当ててください:
+- どの情報が struct に含まれるべきか
+- 関数シグネチャがどう変わるか
+- なぜこれによりコードの見通しが良くなるか
 
-Do not give answers yet.
-After I answer, grade my responses and give me 1 follow-up question.
+まだ答えは出さないでください。
+私が答えた後、回答を採点し、フォローアップ質問を1つ出してください。
 ```
 
-## Skip Condition
+## スキップ条件
 
-You may skip this step if you can already:
+以下がすでにできるなら、このステップはスキップできます:
 
-- tell when a `struct` helps
-- explain the difference between loose variables and grouped state
-- redesign a few function signatures after introducing a state object
+- `struct` が役立つ場面を判断できる
+- ばらばらの変数とグループ化された状態の違いを説明できる
+- 状態オブジェクトの導入後にいくつかの関数シグネチャを再設計できる

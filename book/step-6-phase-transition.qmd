@@ -1,53 +1,62 @@
 ---
-title: "Step 6: Scan Temperature and Plot `<M^2>`"
+title: "Step 6: 温度スキャンと `<M^2>` のプロット"
 ---
 
-This step is a small scientific payoff. Use the code you already built to look at how the system changes across temperature.
+このステップは小さな科学的成果です。これまで構築したコードを使って、温度変化に伴うシステムの変化を観察します。
 
-## Purpose
+## 目的
 
-Run a simple temperature scan, plot `<M^2>` with `Plots.jl`, and check whether the crossover region is broadly consistent with the exact critical temperature.
+簡単な温度スキャンを実行し、`Plots.jl` で `<M^2>` をプロットし、クロスオーバー領域が厳密な臨界温度とおおむね整合するか確認します。
 
-## Target Outcome
+## 到達目標
 
-By the end of this step, you should have:
+このステップの終わりまでに、以下ができていること:
 
-- a function that takes `T` and `L`
-- a `Dict` that stores averaged `E`, `M`, and `M^2`
-- a plot of `<M^2>` as a function of temperature
-- a basic explanation of why `<M^2>` is more useful than `<M>` here
-- a rough comparison with the exact 2D Ising critical temperature
+- `T` と `L` を受け取る関数がある
+- 平均化された `E`、`M`、`M^2` を格納する `Dict` がある
+- 温度の関数としての `<M^2>` のプロットがある
+- `<M^2>` が `<M>` よりもここで有用な理由の基本的な説明ができる
+- 厳密な 2次元イジング臨界温度との大まかな比較ができる
 
-## Execution Spell
+::: {.callout-note}
+## struct を使う場合
 
-```text
-Using my current 2D Ising model code, add a simple function that takes
-temperature T and lattice size L, runs a short Monte Carlo simulation,
-and returns a Dict containing the averages of E, M, and M^2.
-Then evaluate it for several temperatures and plot <M^2> versus T
-using Plots.jl. Keep the code simple and readable.
-```
+Step 4 で `IsingModel` 構造体を導入した場合、ここでも活用できます。ただし、immutable struct では `beta` を後から変更できないため、温度ごとに新しい `IsingModel` を作成するか、以下の最小限バージョンのように `spins` と `beta` を別々に渡す方法でも構いません。どちらのスタイルでも問題ありません。
+:::
 
-## Explanation Spell
+## 実行スペル
 
 ```text
-Explain what you just implemented. Describe how the averages of E, M,
-and M^2 are computed, why <M^2> is more useful than <M> for a quick
-look at the phase transition, what the plot is expected to show,
-what the exact critical temperature is, and why this calculation
-does not determine Tc precisely.
+現在の 2次元イジングモデルのコードを使って、温度 T と格子サイズ L を受け取り、
+短いモンテカルロシミュレーションを実行し、E、M、M^2 の平均を含む
+Dict を返す簡単な関数を追加してください。
+次にいくつかの温度で評価し、Plots.jl を使って <M^2> vs T をプロットしてください。
+コードはシンプルで読みやすくしてください。
 ```
 
-## Concepts to Acquire
+## 説明スペル
 
-- averaging observables over Monte Carlo samples
-- temperature scan
-- why `<M>` may average to nearly zero
-- why `<M^2>` is easier to read in finite-size simulations
-- plotting with `Plots.jl`
-- exact `T_c` versus rough numerical consistency
+```text
+今実装したものを説明してください。E、M、M^2 の平均がどう計算されるか、
+なぜ <M^2> が相転移を素早く見るために <M> より有用なのか、
+プロットが何を示すと期待されるか、厳密な臨界温度が何か、
+この計算がなぜ Tc を正確に決定できないかを説明してください。
+```
 
-## A Minimal Version
+## 習得する概念
+
+- モンテカルロサンプルにわたる物理量の平均
+- 温度スキャン
+- `<M>` がほぼゼロに平均化されうる理由
+- 有限サイズシミュレーションで `<M^2>` の方が読みやすい理由
+- `Plots.jl` によるプロット
+- 厳密な `T_c` vs 大まかな数値的整合性
+
+## 最小限のバージョン
+
+::: {.callout-warning}
+このスキャンは、コードの最適化状況や `L` の値によって**数十秒から数分かかる**ことがあります。プログラムが止まったように見えても、辛抱強く待ってください。`L` を小さくするか `n_meas` を減らせば高速化できますが、結果のノイズは増えます。
+:::
 
 ```julia
 function measure_averages(T, L; n_therm=1_000, n_meas=5_000)
@@ -79,7 +88,7 @@ function measure_averages(T, L; n_therm=1_000, n_meas=5_000)
 end
 ```
 
-Then try a simple scan like this:
+次にこのような簡単なスキャンを試してください:
 
 ```julia
 using Plots
@@ -100,52 +109,53 @@ plot(temperatures, m2_values;
 vline!([Tc_exact]; label="exact Tc", ls=:dash)
 ```
 
-You should not expect a sharp singularity from this small calculation. You should only expect a broad change in behavior near the exact critical temperature.
+この小さな計算から鋭い特異性を期待すべきではありません。厳密な臨界温度の近くで振る舞いが大まかに変化することだけを期待すべきです。
 
-## Reading the Result
+## 結果の読み方
 
-Ask AI to help you explain:
+AI に以下の説明を手伝ってもらいましょう:
 
-- why `<M^2>` tends to be larger at low temperature
-- why it becomes smaller at high temperature
-- why `<M>` itself may be a less stable visual indicator here
-- why a finite lattice and short run blur the transition
-- why "not inconsistent with the exact `T_c`" is a better claim than "we measured `T_c` exactly"
+- `<M^2>` が低温で大きくなる傾向がある理由
+- 高温で小さくなる理由
+- `<M>` 自体がここではあまり安定した視覚的指標にならない理由
+- 有限格子と短い実行が転移をぼやけさせる理由
+- 「厳密な `T_c` と矛盾しない」が「`T_c` を正確に測定した」よりも良い主張である理由
 
-## Code-Reading Check
+## コードリーディング確認
 
-Read this fragment:
+以下のコード断片を読んでください:
 
 ```julia
 m = magnetization(spins)
 m2_sum += m^2
 ```
 
-Then answer:
+そして以下の質問に答えてください:
 
-1. Why do we accumulate `m^2` instead of only `m`?
-2. Why can `<M>` be small even below the critical region in a finite simulation?
-3. What kind of agreement with the exact `T_c` would count as reasonable here?
+1. `m` だけでなく `m^2` を蓄積するのはなぜか？
+2. 有限シミュレーションでは、臨界領域以下でも `<M>` が小さくなりうるのはなぜか？
+3. 厳密な `T_c` とのどの程度の一致がここでは妥当と言えるか？
 
-## Extra Test Generation Prompt
+## 追加テスト生成プロンプト
 
 ```text
-Create 3 short code-reading questions about scanning temperature and plotting <M^2> in a 2D Ising model in Julia.
+Julia での 2次元イジングモデルの温度スキャンと <M^2> のプロットについて、
+短いコードリーディング問題を3つ作成してください。
 
-Focus on:
-- what the averaging function returns
-- why M^2 is plotted instead of only M
-- why the numerical result should only be compared loosely with the exact critical temperature
+以下に焦点を当ててください:
+- 平均化関数が何を返すか
+- なぜ M だけでなく M^2 をプロットするのか
+- なぜ数値結果を厳密な臨界温度と緩くしか比較すべきでないのか
 
-Do not give answers yet.
-After I answer, grade my responses and give me 1 follow-up question.
+まだ答えは出さないでください。
+私が答えた後、回答を採点し、フォローアップ質問を1つ出してください。
 ```
 
-## Skip Condition
+## スキップ条件
 
-You may skip this step if you can already:
+以下がすでにできるなら、このステップはスキップできます:
 
-- write a simple function that returns averaged observables for given `T` and `L`
-- make a basic plot with `Plots.jl`
-- explain why `<M^2>` is a reasonable quick observable near the transition
-- explain why this kind of calculation does not determine `T_c` precisely
+- 与えられた `T` と `L` に対して平均化された物理量を返す簡単な関数を書ける
+- `Plots.jl` で基本的なプロットを作れる
+- 転移付近での `<M^2>` が妥当な素早い物理量である理由を説明できる
+- この種の計算がなぜ `T_c` を正確に決定できないかを説明できる

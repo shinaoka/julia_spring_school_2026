@@ -1,49 +1,52 @@
 ---
-title: "Step 2: Measure Observables"
+title: "Step 2: 物理量の計算"
 ---
 
-The next job is to compute meaningful quantities from the lattice.
+次の仕事は、格子から意味のある物理量を計算することです。
 
-## Purpose
+## 目的
 
-Write small functions that compute magnetization and energy from the spin configuration.
+スピン配置から磁化とエネルギーを計算する小さな関数を書きます。
 
-## Target Outcome
+## 到達目標
 
-By the end of this step, you should have:
+このステップの終わりまでに、以下ができていること:
 
-- a function for magnetization
-- a function for energy
-- a basic understanding of periodic boundary conditions
+- 磁化の関数がある
+- エネルギーの関数がある
+- 周期境界条件の基本的な理解がある
 
-## Prompt to Give the AI
+## AI に渡すプロンプト
 
 ```text
-I have a 2D Ising lattice stored as a matrix in Julia.
-Now I want to compute observables.
+Julia で行列として格納された 2次元イジング格子があります。
+今度は物理量を計算したいです。
 
-Please explain first:
-- what magnetization means
-- what energy means in the 2D Ising model
-- why these should be written as functions that take the lattice as an argument
-- how periodic boundary conditions appear in code
+まず以下を説明してください:
+- 磁化とは何か
+- 2次元イジングモデルにおけるエネルギーとは何か
+- なぜこれらを格子を引数に取る関数として書くべきか
+- 周期境界条件がコード上どのように現れるか
 
-Then help me write:
-- a magnetization function
-- an energy function
+その後、以下を書くのを手伝ってください:
+- 磁化の関数
+- エネルギーの関数
 
-Please keep the implementation simple and readable.
-Give one small step at a time.
+実装はシンプルで読みやすくしてください。
+一度に1つずつ小さなステップで示してください。
 ```
 
-## Concepts to Acquire
+## 習得する概念
 
-- function arguments
-- separating data from operations
-- array traversal
-- periodic boundary conditions with `mod1`
+- 関数の引数
+- データと操作の分離
+- 配列の走査
+- `mod1` による周期境界条件
+- 以下のコードにおける `J = 1` の慣習
 
-## A Minimal Version
+## 最小限のバージョン
+
+以下のコードでは `J = 1` の慣習を使っているため、相互作用の強さは別の因子として現れません。
 
 ```julia
 function magnetization(spins)
@@ -61,9 +64,9 @@ function energy(spins)
 end
 ```
 
-## Code-Reading Check
+## コードリーディング確認
 
-Read this function and explain what it is trying to compute.
+以下の関数を読んで、何を計算しようとしているか説明してください。
 
 ```julia
 function magnetization(spins)
@@ -71,36 +74,37 @@ function magnetization(spins)
 end
 ```
 
-Then read this line:
+次に以下の行を読んでください:
 
 ```julia
 spins[mod1(i + 1, L), j]
 ```
 
-Answer:
+以下の質問に答えてください:
 
-1. What does the first function return physically?
-2. Why does `mod1` appear in the energy calculation?
-3. Why is it better to write `energy(spins)` than to read a global `spins` variable?
+1. 最初の関数は物理的に何を返すか？
+2. エネルギー計算に `mod1` が現れるのはなぜか？
+3. グローバルの `spins` 変数を読むよりも `energy(spins)` と書く方が良いのはなぜか？
 
-## Extra Test Generation Prompt
+## 追加テスト生成プロンプト
 
 ```text
-Create 3 short code-reading questions about computing energy or magnetization in a 2D Ising model.
+2次元イジングモデルのエネルギーまたは磁化の計算について、
+短いコードリーディング問題を3つ作成してください。
 
-Focus on:
-- what each function computes
-- indexing mistakes
-- why passing arrays as arguments is better than relying on globals
+以下に焦点を当ててください:
+- 各関数が何を計算しているか
+- インデックスの間違い
+- グローバル変数に依存するよりも引数として配列を渡す方が良い理由
 
-Do not give answers yet.
-After I answer, grade my responses and give me 1 follow-up question.
+まだ答えは出さないでください。
+私が答えた後、回答を採点し、フォローアップ質問を1つ出してください。
 ```
 
-## Skip Condition
+## スキップ条件
 
-You may skip this step if you can already:
+以下がすでにできるなら、このステップはスキップできます:
 
-- explain what magnetization and energy mean in this model
-- read simple periodic-boundary indexing
-- see why passing `spins` explicitly is better than depending on globals
+- このモデルにおける磁化とエネルギーの意味を説明できる
+- 簡単な周期境界条件のインデックスを読める
+- `spins` を明示的に渡す方がグローバル変数に依存するより良い理由が分かる

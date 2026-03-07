@@ -1,27 +1,27 @@
 ---
-title: "Prerequisites and Goals"
+title: "前提条件と目標"
 ---
 
-This page gives the overall picture of the course and the required setup.
+このページでは、講義の全体像と必要なセットアップを説明します。
 
-## Prerequisites
+## 前提条件
 
-- Basic Git / GitHub operations (covered in the previous lecture)
-- A GitHub account and, ideally, the GitHub Student Developer Pack
-- GitHub CLI (`gh`) installed and authenticated
-  - Reference: <https://docs.github.com/en/github-cli/github-cli/about-github-cli>
-  - After installation, complete authentication:
+- Git / GitHub の基本操作（前回の講義で扱った内容）
+- GitHub アカウント、できれば GitHub Student Developer Pack
+- GitHub CLI（`gh`）のインストールと認証
+  - 参考: <https://docs.github.com/ja/github-cli/github-cli/about-github-cli>
+  - インストール後、認証を完了してください:
 
 ```sh
 gh auth login
-# In the interactive flow, choose GitHub.com -> HTTPS -> browser authentication
-gh auth status   # verify that authentication worked
+# 対話形式で GitHub.com -> HTTPS -> ブラウザ認証を選択
+gh auth status   # 認証が成功したか確認
 ```
 
-- Julia installed (`juliaup` recommended)
-  - `juliaup` lets you install Julia itself and manage versions in one place
-  - Reference: <https://github.com/JuliaLang/juliaup>
-  - Example installation:
+- Julia のインストール（`juliaup` 推奨）
+  - `juliaup` を使えば、Julia のインストールとバージョン管理を一箇所で行えます
+  - 参考: <https://github.com/JuliaLang/juliaup>
+  - インストール例:
 
 ```sh
 # macOS / Linux
@@ -31,62 +31,90 @@ curl -fsSL https://install.julialang.org | sh
 winget install julia -s msstore
 ```
 
-  - Verify installation:
+  - インストールの確認:
 
 ```sh
 julia --version
 ```
 
-  - Official download page: <https://julialang.org/downloads/>
+  - 公式ダウンロードページ: <https://julialang.org/downloads/>
 
-- VS Code installed with the Julia extension
+- VS Code と Julia 拡張機能のインストール
   - VS Code: <https://code.visualstudio.com/>
-  - Julia extension (Julia Language Support): <https://marketplace.visualstudio.com/items?itemName=julialang.language-julia>
+  - Julia 拡張（Julia Language Support）: <https://marketplace.visualstudio.com/items?itemName=julialang.language-julia>
 
-- GitHub Copilot setup (students may be eligible for the Pro plan for free)
-  1. **Before applying**:
-     - Add your university email address to your GitHub account and make sure it is **Verified**
-     - Enable **two-factor authentication (2FA)** in GitHub
-     - Use an alphabet-based name on your GitHub profile
-  2. **Apply for GitHub Education**: <https://education.github.com/> and request the Student Developer Pack
-     - You may need to upload a student ID photo
-     - Approval can take around 3 days (72 hours), so apply early
-  3. **After approval**: once you receive the welcome email, enable Copilot at <https://github.com/settings/copilot/features>
-  4. **Install the VS Code extensions**: GitHub Copilot and GitHub Copilot Chat
-  5. Note: if you install Copilot before approval, you may hit the free-plan limit. Installing after approval is safer.
+## AI コーディングアシスタントのセットアップ
 
-- Google Gemini Code Assist setup (a Copilot alternative; free for personal use)
-  1. **Install the VS Code extension**: search for `Gemini Code Assist` in the Extensions view
-  2. **Sign in with your Google account** from the Gemini sidebar panel
-  3. **Use repository context**: use `@` in the chat box to add files or folders as context
-  4. **If you use an IntelliJ-based IDE**: install `Gemini Code Assist` from the plugin marketplace and sign in
-  - Official documentation:
-    - Setup: <https://developers.google.com/gemini-code-assist/docs/set-up-gemini>
-    - Chat and context selection: <https://developers.google.com/gemini-code-assist/docs/chat-gemini>
-    - FAQ: <https://developers.google.com/gemini-code-assist/resources/faqs>
+以下のいずれか1つをセットアップしてください。複数使える場合は、上のものを優先すると講義がスムーズに進みます。
 
-- Preinstall the packages used in the course if network bandwidth at the venue is limited
+### 選択肢 1: OpenAI Codex（推奨）
+
+ChatGPT Plus（月額 $20）を契約していれば、**追加料金なし**で利用できます。
+
+1. VS Code の拡張機能ビューで「Codex」を検索し、**Codex – OpenAI's coding agent** をインストール
+2. Codex パネルで「Sign in with ChatGPT」をクリックし、ブラウザで OpenAI アカウントにログイン
+3. ログイン後、VS Code 上で Codex が使えるようになります
+
+- 公式ドキュメント: <https://developers.openai.com/codex/ide/>
+- VS Code Marketplace: <https://marketplace.visualstudio.com/items?itemName=openai.chatgpt>
+
+::: {.callout-note}
+Windows ユーザーは WSL（Windows Subsystem for Linux）環境での利用が推奨されています。詳しくは[公式ガイド](https://developers.openai.com/codex/ide/)を参照してください。
+:::
+
+### 選択肢 2: GitHub Copilot
+
+GitHub Student Developer Pack に申請すれば、学生は Pro プランを無料で利用できます。
+
+1. **申請前の準備**:
+   - 大学のメールアドレスを GitHub アカウントに追加し、**Verified** になっていることを確認
+   - GitHub で**二要素認証（2FA）**を有効化
+   - GitHub プロフィールにアルファベットの名前を設定
+2. **GitHub Education に申請**: <https://education.github.com/> で Student Developer Pack を申請
+   - 学生証の写真のアップロードが必要な場合があります
+   - 承認まで最大3日（72時間）かかるため、早めに申請してください
+3. **承認後**: ウェルカムメールを受け取ったら、<https://github.com/settings/copilot/features> で Copilot を有効化
+4. **VS Code 拡張のインストール**: GitHub Copilot と GitHub Copilot Chat をインストール
+5. 注意: 承認前に Copilot をインストールすると、無料プランの制限に達する場合があります。承認後のインストールが安全です。
+
+### 選択肢 3: Google Gemini Code Assist
+
+Google アカウントがあれば無料で利用できます。
+
+1. VS Code の拡張機能ビューで `Gemini Code Assist` を検索してインストール
+2. Gemini サイドバーから **Google アカウントでサインイン**
+3. チャットボックスで `@` を使い、ファイルやフォルダをコンテキストとして追加できます
+4. IntelliJ 系 IDE の場合は、プラグインマーケットプレイスから `Gemini Code Assist` をインストールしてサインイン
+- 公式ドキュメント:
+  - セットアップ: <https://developers.google.com/gemini-code-assist/docs/set-up-gemini>
+  - チャットとコンテキスト選択: <https://developers.google.com/gemini-code-assist/docs/chat-gemini>
+  - FAQ: <https://developers.google.com/gemini-code-assist/resources/faqs>
+
+## パッケージの事前ダウンロード（オプション）
+
+会場のネットワーク帯域が限られている場合に備えた、キャッシュのウォームアップです。
+
+講義本編では Step 0 でプロジェクト環境内にパッケージを追加します。以下のコマンドは、主要パッケージを事前にダウンロード・プリコンパイルしておくための実用的な回避策です。デフォルトの Julia 環境を変更するため、後で行うプロジェクトセットアップとは混同しないでください。
 
 ```sh
-julia -e 'using Pkg; Pkg.add(["BenchmarkTools", "Plots", "Statistics"])'
+julia -e 'using Pkg; Pkg.add(["BenchmarkTools", "Plots"])'
 ```
 
-  - `BenchmarkTools`: used for performance measurement
-  - `Plots`: used for plotting
-  - `Statistics`: provides basic statistics such as `mean` and `std`
+- `BenchmarkTools`: パフォーマンス計測に使用
+- `Plots`: プロットに使用
 
-## What This Course Aims To Teach
+## この講義で目指すこと
 
-### Why coding still matters in the LLM era
+### LLM 時代にコーディングを学ぶ理由
 
-Even if an LLM can write code, you still need to understand **abstraction and structure** to evaluate its output and give good instructions. This course is not about writing everything by hand. It is about being able to read and shape code while working with an LLM.
+LLM がコードを書けるようになっても、その出力を評価し、良い指示を出すためには**抽象化と構造**の理解が必要です。この講義は、すべてを手で書くことを目的としていません。LLM と協力しながらコードを読み、形作る能力を身につけることが目的です。
 
-### Concrete goals
+### 具体的な目標
 
-- Use an LLM such as VS Code Copilot or Gemini Code Assist as a working partner for Julia code
-- Experience what Julia abstractions such as functions, types, and broadcast are good for
-- Learn the entry point to a modern workflow based on GitHub and project environments
+- VS Code Copilot、OpenAI Codex、Gemini Code Assist などの LLM を Julia コードの作業パートナーとして使う
+- 関数、型、ブロードキャストなどの Julia の抽象化が何の役に立つかを体験する
+- GitHub とプロジェクト環境に基づくモダンなワークフローの入口を学ぶ
 
-## Opening Question
+## オープニングクエスチョン
 
-**What does it actually mean to be able to write code together with an LLM?**
+**LLM と一緒にコードを書けるとは、実際にはどういうことだろうか？**
