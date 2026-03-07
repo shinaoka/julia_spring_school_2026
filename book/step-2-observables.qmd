@@ -1,0 +1,106 @@
+---
+title: "Step 2: Measure Observables"
+---
+
+The next job is to compute meaningful quantities from the lattice.
+
+## Purpose
+
+Write small functions that compute magnetization and energy from the spin configuration.
+
+## Target Outcome
+
+By the end of this step, you should have:
+
+- a function for magnetization
+- a function for energy
+- a basic understanding of periodic boundary conditions
+
+## Prompt to Give the AI
+
+```text
+I have a 2D Ising lattice stored as a matrix in Julia.
+Now I want to compute observables.
+
+Please explain first:
+- what magnetization means
+- what energy means in the 2D Ising model
+- why these should be written as functions that take the lattice as an argument
+- how periodic boundary conditions appear in code
+
+Then help me write:
+- a magnetization function
+- an energy function
+
+Please keep the implementation simple and readable.
+Give one small step at a time.
+```
+
+## Concepts to Acquire
+
+- function arguments
+- separating data from operations
+- array traversal
+- periodic boundary conditions with `mod1`
+
+## A Minimal Version
+
+```julia
+function magnetization(spins)
+    return sum(spins) / length(spins)
+end
+
+function energy(spins)
+    L = size(spins, 1)
+    e = 0
+    for i in 1:L, j in 1:L
+        e -= spins[i, j] * spins[mod1(i + 1, L), j]
+        e -= spins[i, j] * spins[i, mod1(j + 1, L)]
+    end
+    return e
+end
+```
+
+## Code-Reading Check
+
+Read this function and explain what it is trying to compute.
+
+```julia
+function magnetization(spins)
+    return sum(spins) / length(spins)
+end
+```
+
+Then read this line:
+
+```julia
+spins[mod1(i + 1, L), j]
+```
+
+Answer:
+
+1. What does the first function return physically?
+2. Why does `mod1` appear in the energy calculation?
+3. Why is it better to write `energy(spins)` than to read a global `spins` variable?
+
+## Extra Test Generation Prompt
+
+```text
+Create 3 short code-reading questions about computing energy or magnetization in a 2D Ising model.
+
+Focus on:
+- what each function computes
+- indexing mistakes
+- why passing arrays as arguments is better than relying on globals
+
+Do not give answers yet.
+After I answer, grade my responses and give me 1 follow-up question.
+```
+
+## Skip Condition
+
+You may skip this step if you can already:
+
+- explain what magnetization and energy mean in this model
+- read simple periodic-boundary indexing
+- see why passing `spins` explicitly is better than depending on globals

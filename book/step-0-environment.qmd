@@ -1,0 +1,200 @@
+---
+title: "Step 0: Create the Project and Environment"
+---
+
+This step is about starting a Julia project in a way that works well with AI, Git, and GitHub, while remaining reproducible.
+
+## Purpose
+
+Create a local project folder, initialize Git, prepare AI instruction files, upload the repository to GitHub, and create a Julia project environment.
+
+## Target Outcome
+
+By the end of this step, you should have:
+
+- a local project directory on your machine
+- a Julia-oriented `.gitignore`
+- a local Git repository
+- `AGENTS.md` and `CLAUDE.md`
+- a public GitHub repository for the project
+- a `Project.toml`
+- a `Manifest.toml`
+- a working Julia project environment
+- a basic explanation of what `git init` does
+- a basic explanation of what `gh repo create` does
+- a basic explanation of what `Pkg.activate(".")` does
+
+## Before You Ask AI
+
+First, the student should create a project folder and move into it.
+
+```bash
+mkdir ising-project
+cd ising-project
+```
+
+If GitHub CLI is not authenticated yet, do this once before continuing:
+
+```bash
+gh auth login
+```
+
+## Concepts to Acquire
+
+- `.gitignore`
+- `git init`
+- local repository vs remote repository
+- `gh repo create`
+- project environment vs global environment
+- `Project.toml`
+- `Manifest.toml`
+- `Pkg.activate(".")`
+- `Pkg.add(...)`
+- reproducibility
+
+## Execution Spell 1: Local Git and AI Files
+
+```text
+In this project directory, create a Julia-oriented .gitignore,
+initialize a git repository, create AGENTS.md with the AI workflow
+rules for this course, and create CLAUDE.md containing only @AGENTS.md.
+Show me the exact contents of the new files.
+```
+
+## Explanation Spell 1
+
+```text
+Explain what you just did. Describe what .gitignore is for,
+what git init changed, why AGENTS.md contains the real rules,
+why CLAUDE.md is minimal, and how I can verify the repository
+state locally.
+```
+
+## Execution Spell 2: Julia Environment
+
+```text
+Create a new Julia environment in the current working directory. Add BenchmarkTools and Plots as dependencies.
+```
+
+## Explanation Spell 2
+
+```text
+Explain what you just did. Describe which files were created
+or updated, what each command or package operation means,
+whether the project environment or the global environment changed,
+and how I can verify the result.
+```
+
+## Execution Spell 3: GitHub Upload
+
+```text
+Using gh, create a new public GitHub repository for this local project,
+make an initial commit, and push the current branch.
+Use a reasonable repository name based on the current folder.
+```
+
+## Explanation Spell 3
+
+```text
+Explain what you just did. Describe the difference between the local
+git repository and the remote GitHub repository, what files were committed,
+what gh repo create did, and how I can verify that the repository
+is now published.
+```
+
+## What This Is For
+
+One reasonable sequence looks like this:
+
+```bash
+mkdir ising-project
+cd ising-project
+git init
+```
+
+```julia
+using Pkg
+Pkg.activate(".")
+Pkg.add(["BenchmarkTools", "Plots"])
+Pkg.status()
+```
+
+The intended usage is:
+
+1. create the folder yourself
+2. paste one execution spell into the AI
+3. let the AI carry out that setup task
+4. paste the matching explanation spell
+5. confirm that you understand what changed
+6. continue to the next spell
+
+In this example, the commands do the following:
+
+- `mkdir ising-project`: create a new working directory for the project
+- `cd ising-project`: move into that directory before creating the Julia environment
+- `git init`: create a local Git repository in the current folder
+- `using Pkg`: load Julia's package manager
+- `Pkg.activate(".")`: treat the current directory as the active project environment
+- `Pkg.add(["BenchmarkTools", "Plots"])`: add the required packages to this project
+- `Pkg.status()`: confirm which environment is active and which packages are installed
+
+After this setup, check that:
+
+- `.git` exists
+- `.gitignore` exists
+- `AGENTS.md` exists
+- `CLAUDE.md` exists
+- `Project.toml` exists
+- `Manifest.toml` exists
+- the repository exists on GitHub
+
+## Code-Reading Check
+
+Read the following and explain what each part is modifying.
+
+```text
+git init
+gh repo create my-julia-project --public
+```
+
+```julia
+using Pkg
+Pkg.activate(".")
+Pkg.add("BenchmarkTools")
+```
+
+Then answer:
+
+1. What is the difference between `git init` and `gh repo create`?
+2. Does `Pkg.add("BenchmarkTools")` here modify the current project or the global environment?
+3. What is the difference between `Project.toml` and `Manifest.toml` here?
+4. Why is this better than doing all work in `@v1.x` without a repository?
+
+## Extra Test Generation Prompt
+
+```text
+Create 4 short code-reading questions about project setup for a Julia repository.
+
+Focus on:
+- what .gitignore does
+- what git init changes
+- what gh repo create does
+- project environment vs global environment
+- Project.toml vs Manifest.toml
+- what Pkg.activate(".") does
+
+Do not give answers yet.
+After I answer, grade my responses and give me 1 follow-up question.
+```
+
+## Skip Condition
+
+You may skip this step if you can already explain:
+
+- why a repository should usually have a .gitignore
+- what a local git repository is
+- what is created on GitHub by gh repo create
+- when to use a project environment
+- what gets recorded in `Project.toml`
+- what gets locked in `Manifest.toml`
+- why AI-generated setup commands should be run inside the project, not blindly in the global environment

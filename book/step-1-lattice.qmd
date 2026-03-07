@@ -1,0 +1,127 @@
+---
+title: "Step 1: Create the Lattice"
+---
+
+Now build the smallest possible state for a 2D Ising model.
+
+## What Is The 2D Ising Model?
+
+The 2D Ising model is a simple model of magnetism on a square lattice.
+
+- each site carries a spin `s_i = ±1`
+- neighboring spins prefer to align
+- temperature competes with that tendency
+
+One standard form of the energy is
+
+```math
+H = -J \sum_{\langle i, j \rangle} s_i s_j
+```
+
+where `s_i = ±1` and the sum runs over nearest-neighbor pairs.
+
+At low temperature, aligned spins are favored, so large ordered domains tend to appear. At high temperature, thermal fluctuations are stronger, so the spins look more disordered. In an infinite system, this model has a phase transition at a critical temperature `T_c`. In this lecture, you will not try to derive that result from theory. Instead, you will build a small simulation and later check that your numerical results are not obviously inconsistent with the exact `T_c`.
+
+## Purpose
+
+Represent the spin configuration as a 2D Julia array and initialize it.
+
+## Concepts You Will Use
+
+If you read the Julia Syntax Quickstart page, you already know about arrays and functions. In this step, you will:
+
+- create a 2D array to represent the spin lattice
+- write a function that initializes that array
+
+If you skipped the quickstart, here is the minimum you need:
+
+- An array stores many values together. A 2D array is like a matrix.
+- A function takes input, does computation, and returns output.
+- Julia uses 1-based indexing (arrays start at 1, not 0).
+
+## Target Outcome
+
+By the end of this step, you should have:
+
+- a function that creates an `L x L` lattice
+- spins stored as `+1` and `-1`
+- a clear reason for putting initialization inside a function
+
+## Prompt to Give the AI
+
+```text
+I want to create the state of a 2D Ising model in Julia.
+
+Please help me write a small function that:
+- takes the lattice size L
+- returns an L x L matrix
+- stores spins as +1 and -1
+- uses simple Julia code that a beginner can read
+
+Before giving code, explain:
+- why a matrix is a natural representation
+- why the initialization should be in a function
+- what element type would be reasonable
+
+Then give one small implementation step at a time.
+```
+
+## Concepts to Acquire
+
+- matrix as system state
+- random initialization
+- function-based initialization
+- element type choices such as `Int8` or `Int`
+
+## A Minimal Version
+
+```julia
+function initialize_spins(L::Int)
+    return rand(Int8[-1, 1], L, L)
+end
+```
+
+Try:
+
+```julia
+spins = initialize_spins(8)
+size(spins)
+eltype(spins)
+```
+
+## Code-Reading Check
+
+Read this code and explain what it does.
+
+```julia
+L = 8
+spins = rand(Int8[-1, 1], L, L)
+```
+
+Then answer:
+
+1. What is stored in `spins`?
+2. Why might it be better to wrap this in `initialize_spins(L)`?
+3. What part of the code would be harder to reuse if it stayed at global scope?
+
+## Extra Test Generation Prompt
+
+```text
+Create 3 short code-reading questions about initializing a 2D Ising lattice in Julia.
+
+Focus on:
+- what the code is storing
+- what the function returns
+- why wrapping logic in a function is useful
+
+Do not give answers yet.
+After I answer, grade my responses and give me 1 follow-up question.
+```
+
+## Skip Condition
+
+You may skip this step if you can already:
+
+- write a function that returns an `L x L` spin matrix
+- explain why function scope is preferable here
+- read simple Julia array initialization without help

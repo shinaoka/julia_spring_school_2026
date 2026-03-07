@@ -1,0 +1,94 @@
+---
+title: "Step 4: Organize State and Code Structure"
+---
+
+Once the simulation works, improve the shape of the code.
+
+## Purpose
+
+Use `struct` and better function boundaries to make the simulation easier to read, explain, and extend.
+
+## Target Outcome
+
+By the end of this step, you should have:
+
+- a clearer representation of simulation state
+- fewer loose variables
+- functions with cleaner interfaces
+
+## Prompt to Give the AI
+
+```text
+My Ising simulation now works, but the code feels scattered.
+I want to organize the state better in Julia.
+
+Please explain first:
+- when it is useful to introduce a struct
+- what information should belong in the simulation state
+- how function signatures may improve after grouping related data
+
+Then help me redesign the code in a minimal way.
+Do not over-engineer it.
+Keep the code readable for a beginner.
+```
+
+## Concepts to Acquire
+
+- `struct`
+- grouping related state
+- simplifying function signatures
+- separating data from operations
+
+## A Minimal Version
+
+```julia
+struct IsingModel
+    spins::Matrix{Int8}
+    beta::Float64
+end
+
+function magnetization(model::IsingModel)
+    return sum(model.spins) / length(model.spins)
+end
+```
+
+This is not the only good design. The point is to make the role of each value clearer.
+
+## Code-Reading Check
+
+Read this:
+
+```julia
+struct IsingModel
+    spins::Matrix{Int8}
+    beta::Float64
+end
+```
+
+Answer:
+
+1. What information is grouped here?
+2. Which function arguments might become unnecessary after this change?
+3. Why might this be easier to explain to AI and to other humans?
+
+## Extra Test Generation Prompt
+
+```text
+Create 3 short code-reading questions about using a struct to organize the state of a 2D Ising model in Julia.
+
+Focus on:
+- what information belongs in the struct
+- how function signatures change
+- why this improves code clarity
+
+Do not give answers yet.
+After I answer, grade my responses and give me 1 follow-up question.
+```
+
+## Skip Condition
+
+You may skip this step if you can already:
+
+- tell when a `struct` helps
+- explain the difference between loose variables and grouped state
+- redesign a few function signatures after introducing a state object

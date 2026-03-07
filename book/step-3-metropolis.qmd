@@ -1,0 +1,135 @@
+---
+title: "Step 3: Implement the Metropolis Update"
+---
+
+This step is the conceptual center of the lecture.
+
+## Purpose
+
+Implement one Metropolis update step and use AI to understand a new algorithm through dialogue.
+
+## Target Outcome
+
+By the end of this step, you should have:
+
+- a working Metropolis update
+- a basic simulation loop
+- a verbal explanation of why the acceptance rule looks the way it does
+- a rough understanding of how this differs from heat-bath updates
+
+## Why This Step Matters
+
+The Metropolis method is a good example of what AI should help you do.
+
+The main value is not that AI can generate the code quickly. The main value is that AI can help you understand:
+
+- what the state of the system is
+- what one update attempt changes
+- why we compute an energy difference `ΔE`
+- why lower-energy proposals are always accepted
+- why higher-energy proposals are accepted only probabilistically
+- which part of the code is the core algorithmic idea
+
+## Prompt to Give the AI
+
+```text
+I am learning the Metropolis update for the 2D Ising model in Julia.
+
+Before writing code, explain the algorithm in a beginner-friendly way.
+Please distinguish clearly between:
+
+- the state of the system
+- what one update attempt does
+- why we compute the energy difference ΔE
+- why lower-energy moves are accepted immediately
+- why higher-energy moves are accepted with probability exp(-beta * ΔE)
+- which part of the code is the core of the algorithm
+
+Then compare the Metropolis method with the heat-bath method.
+
+Please explain:
+- what Metropolis proposes
+- what it accepts or rejects
+- what heat-bath samples directly
+- how the code structure would differ
+- what both methods are trying to achieve
+
+Keep the math light. Focus on intuition and algorithmic meaning.
+After that, give me one small implementation step at a time instead of a full solution at once.
+```
+
+## Concepts to Acquire
+
+- proposal and acceptance
+- energy difference `ΔE`
+- one Monte Carlo sweep
+- probabilistic acceptance
+- Metropolis vs heat-bath
+
+## A Minimal Version
+
+```julia
+function metropolis_step!(spins, beta)
+    L = size(spins, 1)
+    for _ in 1:(L * L)
+        i = rand(1:L)
+        j = rand(1:L)
+        nn = spins[mod1(i + 1, L), j] + spins[mod1(i - 1, L), j] +
+             spins[i, mod1(j + 1, L)] + spins[i, mod1(j - 1, L)]
+        dE = 2 * spins[i, j] * nn
+        if dE <= 0 || rand() < exp(-beta * dE)
+            spins[i, j] *= -1
+        end
+    end
+end
+```
+
+## Compare Update Rules
+
+Use AI to explain the difference between these two ideas:
+
+- `Metropolis`: propose a flip, then accept or reject it
+- `Heat-bath`: sample the new spin directly from the local conditional distribution
+
+You do not need to fully implement both methods in this lecture. You do need to understand the difference in update logic.
+
+## Code-Reading Check
+
+Read this fragment:
+
+```julia
+dE = 2 * spins[i, j] * nn
+if dE <= 0 || rand() < exp(-beta * dE)
+    spins[i, j] *= -1
+end
+```
+
+Answer:
+
+1. What is `dE` describing?
+2. Why are some moves accepted with probability less than 1?
+3. Which line contains the essential Metropolis acceptance logic?
+
+## Extra Test Generation Prompt
+
+```text
+Create 3 short code-reading questions about the Metropolis method for the 2D Ising model.
+
+Conditions:
+- 1 question should ask about the meaning of the algorithm
+- 1 question should ask about the acceptance rule
+- 1 question should ask about a likely bug or improvement in the code
+- do not give the answers yet
+- after I answer, grade my responses and give me 1 follow-up question
+
+Then create 2 additional short conceptual questions comparing Metropolis and heat-bath updates.
+Focus on the difference in update logic, not long calculations.
+```
+
+## Skip Condition
+
+You may skip this step if you can already:
+
+- explain the Metropolis update in words
+- identify the acceptance rule in code
+- explain the main difference between proposal-and-rejection and direct conditional sampling

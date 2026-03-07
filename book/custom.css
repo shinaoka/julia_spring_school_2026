@@ -1,0 +1,62 @@
+/* Julia code block styling */
+pre.sourceCode.julia {
+  background-color: #f8f4ff !important;
+  border-left: 4px solid #9558b2;
+}
+
+pre.sourceCode.julia code {
+  background-color: transparent;
+}
+
+/* Spell (text code blocks) styling - AI prompts */
+/* Use maximum specificity to override Quarto theme */
+html body div.quarto-layout-panel main.content section pre.text,
+html body div.quarto-layout-panel main.content section pre[class="text"],
+html body main.content section pre.text,
+html body main.content section pre[class="text"],
+body main section pre.text,
+body main section pre[class="text"],
+section pre.text,
+section pre[class="text"],
+pre.text,
+pre[class="text"] {
+  background-color: #fff4e6 !important;
+  background: #fff4e6 !important;
+  border-left: 4px solid #ff9800 !important;
+  position: relative;
+  margin: 1em 0;
+  padding: 0.8em 1em !important;
+}
+
+html body div.quarto-layout-panel main.content section pre.text code,
+html body div.quarto-layout-panel main.content section pre[class="text"] code,
+html body main.content section pre.text code,
+html body main.content section pre[class="text"] code,
+body main section pre.text code,
+body main section pre[class="text"] code,
+section pre.text code,
+section pre[class="text"] code,
+pre.text code,
+pre[class="text"] code {
+  background-color: transparent !important;
+  background: transparent !important;
+}
+
+/* Copy button styling for text blocks (spells) */
+pre.text + div .quarto-code-copy-button,
+div:has(> pre.text) .quarto-code-copy-button {
+  background-color: rgba(255, 152, 0, 0.15) !important;
+  border-color: #ff9800 !important;
+  color: #ff9800 !important;
+}
+
+pre.text + div .quarto-code-copy-button:hover,
+div:has(> pre.text) .quarto-code-copy-button:hover {
+  background-color: rgba(255, 152, 0, 0.25) !important;
+}
+
+/* Ensure copy button is visible for all code blocks */
+button.quarto-code-copy-button {
+  opacity: 1 !important;
+  visibility: visible !important;
+}

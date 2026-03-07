@@ -1,0 +1,190 @@
+---
+title: "Julia Syntax Quickstart"
+---
+
+This page gives you a quick tour of the Julia syntax you will see in the next few steps. You do not need to memorize everything here. The goal is to recognize these patterns when they appear, so you can read the code without getting stuck.
+
+## What This Page Is For
+
+This is not a complete Julia tutorial. It covers only the syntax that appears in Step 1 and Step 2. More advanced topics such as `struct`, modules, and performance optimization come later.
+
+## Variables and Expressions
+
+Julia code reads left to right:
+
+```julia
+x = 3
+beta = 1 / T
+L = 8
+```
+
+- `=` assigns a value to a variable
+- You can use variables in expressions
+- Variable names are case-sensitive
+
+## Functions and Return Values
+
+A function takes input, does computation, and returns output:
+
+```julia
+function initialize_spins(L)
+    return rand(Int8[-1, 1], L, L)
+end
+```
+
+- `function name(args) ... end` defines a function
+- `return` makes the output explicit
+- In Julia, the last expression is also returned automatically, but using `return` is clearer for beginners
+
+You call a function like this:
+
+```julia
+spins = initialize_spins(8)
+```
+
+## Arrays, Matrices, and Indexing
+
+An array stores many values together:
+
+```julia
+A = [1, 2, 3]           # 1D array
+B = [1 2; 3 4]          # 2D array (matrix)
+C = rand(Int8[-1, 1], 4, 4)  # 4x4 matrix
+```
+
+- A 2D array is like a table or matrix
+- `A[i]` gets the i-th element (1D)
+- `A[i, j]` gets the element at row i, column j (2D)
+- **Important**: Julia uses 1-based indexing, not 0-based
+
+Useful functions:
+
+```julia
+size(A)        # dimensions of A
+length(A)      # total number of elements
+eltype(A)      # element type (e.g., Int8, Float64)
+```
+
+## Loops and Ranges
+
+A `for` loop repeats code:
+
+```julia
+for i in 1:L
+    # do something with i
+end
+```
+
+- `1:L` creates a range from 1 to L
+- You can nest loops or combine them:
+
+```julia
+for i in 1:L, j in 1:L
+    # do something with i and j
+end
+```
+
+## Types You Will See
+
+Julia has types, but you do not need to write them everywhere:
+
+```julia
+x = 3          # Int
+y = 3.0        # Float64
+z = Int8(3)    # Int8
+```
+
+Common types in this course:
+
+- `Int`: integer (usually 64-bit)
+- `Int8`: small integer (8-bit, saves memory)
+- `Float64`: floating-point number
+- `Bool`: true or false
+
+Type annotations (like `L::Int`) mean "this should be an integer." You can read them, but you do not need to write them everywhere yet.
+
+## Mutation, `foo!`, and `copy`
+
+Some functions modify arrays in place:
+
+```julia
+function flip_first!(spins)
+    spins[1, 1] *= -1
+    return nothing
+end
+
+spins = [1 1; 1 1]
+flip_first!(spins)
+# spins is now [-1 1; 1 1]
+```
+
+- Functions ending with `!` are a convention meaning "this might modify its arguments"
+- Arrays are mutable: changes inside a function affect the original array
+- If you need a separate copy, use `copy(x)`:
+
+```julia
+original = [1, 2, 3]
+duplicate = copy(original)
+modify!(duplicate)
+# original is unchanged
+```
+
+## Update Operators
+
+Shorthand for common updates:
+
+```julia
+x += 1    # same as x = x + 1
+e -= 5    # same as e = e - 5
+spins[i, j] *= -1  # same as spins[i, j] = spins[i, j] * -1
+```
+
+## `using` and Packages
+
+To use code from a package:
+
+```julia
+using Pkg
+using BenchmarkTools
+using Plots
+```
+
+- `using PackageName` loads the package
+- Packages provide functions you can call
+- Project environments (from Step 0) control which packages are available
+
+## What You Can Ignore For Now
+
+You do not need to understand these yet:
+
+- `struct` (comes in Step 4)
+- `module` and package development (comes later)
+- Multiple dispatch details
+- Performance optimization details (comes in Step 5)
+- Broadcasting with `.` (not used in this course)
+
+## Mini Code-Reading Check
+
+Read this and explain what it does:
+
+```julia
+function count_ones(A)
+    n = 0
+    for i in 1:size(A, 1), j in 1:size(A, 2)
+        if A[i, j] == 1
+            n += 1
+        end
+    end
+    return n
+end
+```
+
+Then answer:
+
+1. What does `size(A, 1)` return?
+2. Why does the function modify `n` inside the loop?
+3. What would happen if you called `count_ones` on a 3x3 matrix filled with ones?
+
+## Next Steps
+
+Now you are ready for Step 1, where you will create a function that initializes a 2D Ising lattice.

@@ -1,0 +1,193 @@
+---
+title: "Step 5: Benchmark and Optimize"
+---
+
+This step is not advanced optimization. It is disciplined measurement and a few high-value improvements.
+
+## Purpose
+
+Use benchmarking to decide whether code is actually getting faster, and learn a few common Julia performance ideas.
+
+## Target Outcome
+
+By the end of this step, you should have:
+
+- a working benchmark with `BenchmarkTools`
+- a clear distinction between compile time and execution time
+- a rough sense of the time per spin-update attempt
+- a few improvements justified by measurement
+
+## Prompt to Give the AI
+
+```text
+I have a working Julia implementation of a 2D Ising model.
+Now I want to benchmark and improve it carefully.
+
+Please explain first:
+- why @time is not enough for reliable benchmarking
+- what BenchmarkTools and @btime do
+- why globals can hurt performance
+- why functions and stable types often help Julia
+- what unnecessary allocations are
+- how to estimate the time per single spin-update attempt from a benchmark of one sweep
+
+Then help me inspect my code step by step.
+Do not optimize everything at once.
+Ask me to measure before and after each meaningful change.
+Also help me estimate the time per one spin-update attempt in nanoseconds and compare it with a rough 1 GHz intuition.
+```
+
+## Concepts to Acquire
+
+- `BenchmarkTools`
+- `@btime`
+- compile time vs execution time
+- global variables and performance
+- type stability
+- unnecessary allocations
+- simple in-place improvements
+- order-of-magnitude estimates in `ns / attempt`
+
+## A Minimal Benchmark
+
+```julia
+using BenchmarkTools
+
+spins = initialize_spins(32)
+beta = 0.44
+
+@btime metropolis_step!($spins, $beta)
+```
+
+To estimate the time per single spin-update attempt, it is often clearer to keep the benchmark result:
+
+```julia
+trial = @benchmark metropolis_step!($spins, $beta)
+ns_per_attempt = median(trial).time / length(spins)
+```
+
+Here `metropolis_step!` performs about `L^2` update attempts for an `L x L` lattice, so dividing by `length(spins)` gives a rough cost per attempt. Using `@benchmark` also lets you inspect the spread of timings instead of relying on only one summarized value.
+
+## Order-Of-Magnitude Check
+
+It is useful to develop a rough physical sense for the number you get.
+
+- A `1 GHz` clock corresponds very roughly to `1 ns` per cycle.
+- A single spin-update attempt in optimized Julia will not take only one CPU cycle.
+- A result on the order of a few nanoseconds to a few tens of nanoseconds per attempt can be a reasonable rough expectation on a modern machine.
+- If you see something much slower, check first for global variables, unnecessary allocations, or avoidable overhead in the inner loop.
+
+This is only a rough sanity check. Exact numbers depend on hardware, random-number generation cost, compiler optimizations, and the code structure.
+
+## What to Look For
+
+Ask AI to help you inspect questions like these:
+
+- Is any important code still running at global scope?
+- Are function arguments typed consistently?
+- Is the code allocating more than expected?
+- Is a temporary array being created unnecessarily?
+- Would an in-place update make the code simpler or faster?
+- What does the benchmark imply in `ns / attempt`?
+- Is that order of magnitude broadly plausible?
+
+## Optional Exercise: BLAS Benchmark
+
+It is also useful to develop performance intuition from a problem that is already highly optimized.
+
+Ask AI to benchmark a dense matrix multiplication with BLAS forced to one thread.
+
+Execution spell:
+
+```text
+Benchmark a 1000x1000 dense matrix multiplication in Julia using BLAS
+with a single thread. Use BenchmarkTools, set BLAS to one thread,
+and report the runtime. Keep the code minimal and readable.
+```
+
+Explanation spell:
+
+```text
+Explain why this runtime is plausible. Use the hint that dense matrix
+multiplication scales as O(N^3), estimate the rough number of
+floating-point operations for a 1000x1000 matrix multiplication,
+and explain why a runtime below 1 second is not necessarily surprising
+when optimized BLAS is used.
+```
+
+One minimal version is:
+
+```julia
+using LinearAlgebra
+using BenchmarkTools
+
+BLAS.set_num_threads(1)
+
+A = rand(Float64, 1000, 1000)
+B = rand(Float64, 1000, 1000)
+
+@btime $A * $B
+```
+
+The goal is not to memorize one number. The goal is to connect:
+
+- matrix size
+- `O(N^3)` scaling
+- optimized BLAS kernels
+- observed wall-clock time
+
+If the result is below 1 second, that is not automatically suspicious. The interesting question is whether the measured time is broadly consistent with the required floating-point work.
+
+## Code-Reading Check
+
+Read this:
+
+```julia
+spins = initialize_spins(32)
+beta = 0.44
+trial = @benchmark metropolis_step!($spins, $beta)
+ns_per_attempt = median(trial).time / length(spins)
+```
+
+Answer:
+
+1. Why is it important to interpolate `spins` and `beta` into the benchmark?
+2. Why do we divide by `length(spins)` when estimating `ns_per_attempt`?
+3. If the result is far larger than a few tens of nanoseconds per attempt, what should you inspect first?
+4. Why should you measure before and after each change instead of trusting the AI's guess?
+
+Then consider this separate benchmark:
+
+```julia
+using LinearAlgebra
+BLAS.set_num_threads(1)
+@btime $A * $B
+```
+
+5. Why is `BLAS.set_num_threads(1)` useful here?
+6. Why can a `1000 x 1000` matrix multiplication still finish in well under 1 second?
+
+## Extra Test Generation Prompt
+
+```text
+Create 3 short code-reading questions about benchmarking and basic optimization in Julia.
+
+Focus on:
+- BenchmarkTools usage
+- how to estimate `ns / attempt`
+- why globals can hurt performance
+- how to spot likely unnecessary allocations
+- how in-place updates or simpler data flow may help
+
+Do not give answers yet.
+After I answer, grade my responses and give me 1 follow-up question.
+```
+
+## Skip Condition
+
+You may skip this step if you can already:
+
+- set up a proper `@btime` benchmark
+- estimate a rough time per spin-update attempt
+- explain why globals are risky for performance
+- identify at least one plausible source of avoidable allocation in simple Julia code

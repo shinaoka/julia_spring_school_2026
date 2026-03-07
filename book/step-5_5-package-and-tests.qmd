@@ -1,0 +1,219 @@
+---
+title: "Step 5.5: Convert to Package and Add Tests"
+---
+
+Before moving to the final temperature scan, convert your code into a proper Julia package and add tests. This step also introduces **brainstorming** and **Superpowers**, a framework that helps AI agents work more systematically.
+
+## Purpose
+
+Convert the project into a Julia package structure, add basic tests, and learn why brainstorming before implementation matters.
+
+## Why Brainstorming Matters
+
+When you ask AI to "convert this to a package," it might jump straight into creating files. But a better approach is to first think through:
+
+- What should the package be called?
+- What functions should be public (exported)?
+- What should stay private (internal helpers)?
+- What tests are most important to add first?
+
+This is **brainstorming**: asking questions before writing code. It leads to better designs and fewer rewrites.
+
+## Introducing Superpowers
+
+[Superpowers](https://github.com/obra/superpowers) is a framework that teaches AI agents to use systematic workflows. One of its core skills is **brainstorming**, which ensures the agent asks clarifying questions before jumping into implementation.
+
+### Installing Superpowers
+
+Superpowers officially supports the following platforms:
+
+**Cursor** (via Plugin Marketplace):
+
+```text
+/plugin-add superpowers
+```
+
+**Claude Code** (via Plugin Marketplace):
+
+First register the marketplace:
+
+```text
+/plugin marketplace add obra/superpowers-marketplace
+```
+
+Then install:
+
+```text
+/plugin install superpowers@superpowers-marketplace
+```
+
+**Codex** and **OpenCode** also have manual setup instructions, but are less commonly used in this course.
+
+**VS Code with GitHub Copilot** (community alternative):
+
+Superpowers is not officially supported for GitHub Copilot, but there is a community-maintained alternative:
+
+1. Install the GitHub Copilot extension in VS Code if you haven't already.
+2. Use the community skills repository: [faulkdev/github-copilot-superpowers](https://playbooks.com/skills/faulkdev/github-copilot-superpowers)
+3. Alternatively, you can manually practice brainstorming by explicitly asking your AI to think through the design before writing code. The Execution Spell 1 below shows how to do this.
+
+The key idea is the same: ask questions before jumping into implementation, even if Superpowers skills don't trigger automatically.
+
+After installation, start a new session. The agent will automatically use Superpowers skills when appropriate.
+
+## Target Outcome
+
+By the end of this step, you should have:
+
+- Superpowers installed in your AI tool (or manual brainstorming practice)
+- a test plan decided through brainstorming
+- a Julia package structure (`src/`, `test/`)
+- a `module` declaration
+- exported functions (public API)
+- basic tests based on your brainstorming discussion
+- an understanding of why brainstorming helps
+
+## Execution Spell: Convert to Package and Add Tests
+
+**If you have Superpowers installed**, the brainstorming will happen automatically. Just ask:
+
+```text
+Convert this Julia project into a minimal Julia package.
+Create the standard package structure with src/ and test/ directories,
+move the core code into a module, export the public functions,
+and add appropriate tests. Think through the design and test plan first.
+```
+
+**If you don't have Superpowers** (e.g., VS Code Copilot), do brainstorming manually first:
+
+```text
+I want to convert my 2D Ising model code into a Julia package.
+Before writing any code, help me think through:
+- What should the package name be?
+- Which functions should be exported (public API)?
+- Which functions should stay private?
+- What are the most important tests to add first?
+- What should the module structure look like?
+
+Ask me questions one at a time to refine the design.
+```
+
+Then, after the brainstorming discussion, use this execution spell:
+
+```text
+Convert this Julia project into a minimal Julia package based on our design.
+Create the standard package structure with src/ and test/ directories,
+move the core code into a module, export the public functions,
+and implement the tests we discussed.
+Keep it simple and readable.
+```
+
+## Explanation Spell
+
+```text
+Explain what you just created. Describe the package structure,
+what moved into src/, what the module declaration does,
+what export means, and how the tests are organized.
+If Superpowers triggered brainstorming automatically, explain how that helped.
+```
+
+## Concepts to Acquire
+
+- brainstorming before implementation
+- Superpowers framework
+- Julia package structure (`src/`, `test/`)
+- `module` and `export`
+- public API vs private helpers
+- basic test structure
+
+## A Minimal Package Structure
+
+After brainstorming, your package might look like this:
+
+```
+ising-project/
+├── Project.toml
+├── Manifest.toml
+├── src/
+│   └── Ising2D.jl
+└── test/
+    └── runtests.jl
+```
+
+`src/Ising2D.jl`:
+
+```julia
+module Ising2D
+
+export initialize_spins, magnetization, energy, metropolis_step!
+
+# ... your existing functions ...
+
+end # module
+```
+
+`test/runtests.jl`:
+
+```julia
+using Ising2D
+using Test
+
+@testset "Ising2D" begin
+    @test size(initialize_spins(8)) == (8, 8)
+    
+    spins = initialize_spins(8)
+    m = magnetization(spins)
+    @test -1 <= m <= 1
+    
+    e = energy(spins)
+    @test isfinite(e)
+end
+```
+
+## Why This Matters
+
+- **Brainstorming** helps avoid rework by thinking through design first
+- **Package structure** makes code reusable and testable
+- **Tests** catch bugs and document expected behavior
+- **Superpowers** teaches AI to use systematic workflows
+
+## Code-Reading Check
+
+Read this:
+
+```julia
+module Ising2D
+export initialize_spins
+# ...
+end
+```
+
+Answer:
+
+1. What does `export` do?
+2. Why might some functions not be exported?
+3. How do tests help when you refactor code later?
+
+## Extra Test Generation Prompt
+
+```text
+Create 3 short code-reading questions about Julia package structure
+and testing.
+
+Focus on:
+- what module and export mean
+- why package structure helps
+- how tests document behavior
+
+Do not give answers yet.
+After I answer, grade my responses and give me 1 follow-up question.
+```
+
+## Skip Condition
+
+You may skip this step if you can already:
+
+- explain why brainstorming before implementation helps
+- create a minimal Julia package structure
+- write basic tests using Julia's `Test` module
+- explain the difference between exported and private functions

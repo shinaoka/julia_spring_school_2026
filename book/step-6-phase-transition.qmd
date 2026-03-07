@@ -1,0 +1,151 @@
+---
+title: "Step 6: Scan Temperature and Plot `<M^2>`"
+---
+
+This step is a small scientific payoff. Use the code you already built to look at how the system changes across temperature.
+
+## Purpose
+
+Run a simple temperature scan, plot `<M^2>` with `Plots.jl`, and check whether the crossover region is broadly consistent with the exact critical temperature.
+
+## Target Outcome
+
+By the end of this step, you should have:
+
+- a function that takes `T` and `L`
+- a `Dict` that stores averaged `E`, `M`, and `M^2`
+- a plot of `<M^2>` as a function of temperature
+- a basic explanation of why `<M^2>` is more useful than `<M>` here
+- a rough comparison with the exact 2D Ising critical temperature
+
+## Execution Spell
+
+```text
+Using my current 2D Ising model code, add a simple function that takes
+temperature T and lattice size L, runs a short Monte Carlo simulation,
+and returns a Dict containing the averages of E, M, and M^2.
+Then evaluate it for several temperatures and plot <M^2> versus T
+using Plots.jl. Keep the code simple and readable.
+```
+
+## Explanation Spell
+
+```text
+Explain what you just implemented. Describe how the averages of E, M,
+and M^2 are computed, why <M^2> is more useful than <M> for a quick
+look at the phase transition, what the plot is expected to show,
+what the exact critical temperature is, and why this calculation
+does not determine Tc precisely.
+```
+
+## Concepts to Acquire
+
+- averaging observables over Monte Carlo samples
+- temperature scan
+- why `<M>` may average to nearly zero
+- why `<M^2>` is easier to read in finite-size simulations
+- plotting with `Plots.jl`
+- exact `T_c` versus rough numerical consistency
+
+## A Minimal Version
+
+```julia
+function measure_averages(T, L; n_therm=1_000, n_meas=5_000)
+    beta = 1 / T
+    spins = initialize_spins(L)
+
+    for _ in 1:n_therm
+        metropolis_step!(spins, beta)
+    end
+
+    e_sum = 0.0
+    m_sum = 0.0
+    m2_sum = 0.0
+
+    for _ in 1:n_meas
+        metropolis_step!(spins, beta)
+        e = energy(spins) / length(spins)
+        m = magnetization(spins)
+        e_sum += e
+        m_sum += m
+        m2_sum += m^2
+    end
+
+    return Dict(
+        :E => e_sum / n_meas,
+        :M => m_sum / n_meas,
+        :M2 => m2_sum / n_meas,
+    )
+end
+```
+
+Then try a simple scan like this:
+
+```julia
+using Plots
+
+temperatures = range(1.5, 3.5; length=16)
+L = 16
+results = [measure_averages(T, L) for T in temperatures]
+m2_values = [r[:M2] for r in results]
+
+Tc_exact = 2 / log(1 + sqrt(2))
+
+plot(temperatures, m2_values;
+    xlabel="T",
+    ylabel="<M^2>",
+    label="L = 16",
+    lw=2,
+)
+vline!([Tc_exact]; label="exact Tc", ls=:dash)
+```
+
+You should not expect a sharp singularity from this small calculation. You should only expect a broad change in behavior near the exact critical temperature.
+
+## Reading the Result
+
+Ask AI to help you explain:
+
+- why `<M^2>` tends to be larger at low temperature
+- why it becomes smaller at high temperature
+- why `<M>` itself may be a less stable visual indicator here
+- why a finite lattice and short run blur the transition
+- why "not inconsistent with the exact `T_c`" is a better claim than "we measured `T_c` exactly"
+
+## Code-Reading Check
+
+Read this fragment:
+
+```julia
+m = magnetization(spins)
+m2_sum += m^2
+```
+
+Then answer:
+
+1. Why do we accumulate `m^2` instead of only `m`?
+2. Why can `<M>` be small even below the critical region in a finite simulation?
+3. What kind of agreement with the exact `T_c` would count as reasonable here?
+
+## Extra Test Generation Prompt
+
+```text
+Create 3 short code-reading questions about scanning temperature and plotting <M^2> in a 2D Ising model in Julia.
+
+Focus on:
+- what the averaging function returns
+- why M^2 is plotted instead of only M
+- why the numerical result should only be compared loosely with the exact critical temperature
+
+Do not give answers yet.
+After I answer, grade my responses and give me 1 follow-up question.
+```
+
+## Skip Condition
+
+You may skip this step if you can already:
+
+- write a simple function that returns averaged observables for given `T` and `L`
+- make a basic plot with `Plots.jl`
+- explain why `<M^2>` is a reasonable quick observable near the transition
+- explain why this kind of calculation does not determine `T_c` precisely
