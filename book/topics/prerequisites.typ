@@ -60,6 +60,16 @@ julia --version
     - https://qiita.com/melonsode/items/3602ea6441ca82e43c5a
     - https://zenn.dev/kazu_9626/articles/1e8b48491233e8
 
+- Google Gemini Code Assist の設定（Copilot の代替。個人利用は無料）
+  + *VS Code 拡張をインストール*：拡張機能で `Gemini Code Assist` を検索してインストール
+  + *Google アカウントでログイン*：サイドバーの Gemini パネルからサインインする
+  + *repository context を使う*：チャット入力欄で `@` を使い、対象ファイルやフォルダを文脈に追加する
+  + *IntelliJ 系 IDE を使う場合*：Plugins Marketplace で `Gemini Code Assist` を入れてサインインする
+  - 公式ドキュメント：
+    - セットアップ: https://developers.google.com/gemini-code-assist/docs/set-up-gemini
+    - チャットとコンテキスト指定: https://developers.google.com/gemini-code-assist/docs/chat-gemini
+    - FAQ: https://developers.google.com/gemini-code-assist/resources/faqs
+
 - 講義で使うパッケージの事前インストール（会場の回線が細いため）
 
 ```sh
@@ -78,7 +88,7 @@ LLM がコードを書いてくれる時代でも、*抽象化・構造化の考
 
 === 具体的なゴール
 
-- LLM（VS Code Copilot Pro など）を *相棒* にして Julia コードを書かせ・読めるようになる
+- LLM（VS Code Copilot / Gemini Code Assist など）を *相棒* にして Julia コードを書かせ・読めるようになる
 - Julia の抽象化（関数・型・broadcast）の「何がおいしいか」を体感する
 - プロジェクト環境と GitHub を用いた、現代的な開発ワークフローの入り口を経験する
 

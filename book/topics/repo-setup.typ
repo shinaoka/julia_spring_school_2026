@@ -18,7 +18,7 @@
 
 - GitHub CLI：`gh`（例：`gh auth login`、`gh repo create`）
 - Git
-- VS Code + Julia 拡張 + GitHub Copilot
+- VS Code + Julia 拡張 + GitHub Copilot または Gemini Code Assist
 
 == 1. GitHub 上でリポジトリ作成
 
@@ -46,13 +46,14 @@ gh repo clone my-julia-project
 code my-julia-project
 ```
 
-- VS Code が開いたら、*GitHub Copilot Chat* が使えることを確認する
-  - サイドバーの Copilot アイコン → チャットウィンドウが開けば OK
+- VS Code が開いたら、*GitHub Copilot Chat または Gemini Code Assist* が使えることを確認する
+  - Copilot を使う場合：サイドバーの Copilot アイコン → チャットウィンドウが開けば OK
+  - Gemini を使う場合：サイドバーの Gemini アイコン → チャットウィンドウが開けば OK
 - ここから先、LLM を「相棒」として常に使っていく
 
 == 3. LLM に「プロジェクト環境」を作らせる
 
-VS Code の Copilot Chat（または任意の LLM）に、以下のように頼んでみましょう。
+VS Code の Copilot Chat / Gemini Code Assist（または任意の LLM）に、以下のように頼んでみましょう。
 
 *プロンプト例：*
 
