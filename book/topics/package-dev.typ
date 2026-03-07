@@ -14,7 +14,7 @@
 
 == サンプルを見てみよう
 
-性能改善で使ったサンプルリポジトリ（`julia_spring_school_2026_sample`）に、最適化済みの `estimate_pi` をパッケージ化した例が入っている。自分の fork を開いて `topics/package_dev/MonteCarloPi/` を見てみよう。
+性能改善で使った `estimate_pi` を、そのまま最小の Julia パッケージにした例を考える。ここでは `topics/package_dev/MonteCarloPi/` という構成を例として見る。
 
 === ディレクトリ構成
 
@@ -91,10 +91,10 @@ julia = "1.10"
 
 == テストを動かす
 
-サンプルリポジトリの `MonteCarloPi` ディレクトリでテストを実行できる。
+`MonteCarloPi` ディレクトリでテストを実行できる。
 
 ```sh
-cd julia_spring_school_2026_sample/topics/package_dev/MonteCarloPi
+cd <自分のリポジトリ>/topics/package_dev/MonteCarloPi
 julia --project=. -e 'using Pkg; Pkg.instantiate(); Pkg.test()'
 ```
 

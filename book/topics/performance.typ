@@ -59,24 +59,22 @@ N = 10_000_000
 - *`$` 補間*：グローバル変数をそのまま渡すと、型が不安定（`Any` 型）になり遅くなる。`$` を付けるとローカル変数として扱われ、正しい性能が測れる
 - `@btime` はデフォルトで複数回実行し、*最小値* を報告する
 
-== サンプルリポジトリを動かす
+== 自分のコードを計測する
 
-講師が用意したサンプルリポジトリには、わざと遅く書いた `estimate_pi()` が入っている。これを clone して動かそう。
+この講義では、受講者が自分で作ってきたコードを計測し、改善する。ここでは円周率推定の `estimate_pi()` を題材に進める。
 
-=== 1. fork して clone
+=== 1. 作業ディレクトリに入る
 
-+ GitHub で https://github.com/shinaoka/julia_spring_school_2026_sample を開く
-+ 右上の *Fork* ボタンを押して、自分のアカウントにコピーを作る
-+ fork した自分のリポジトリを clone する：
++ 自分のリポジトリで、このトピックに対応するディレクトリへ移動する
++ まだ依存関係を入れていなければ、プロジェクト環境を有効化して `instantiate` する
 
 ```sh
-gh repo clone <自分のユーザ名>/julia_spring_school_2026_sample
-cd julia_spring_school_2026_sample/topics/monte_carlo_pi
+cd <自分のリポジトリ>/<対象ディレクトリ>
 julia --project=. -e 'using Pkg; Pkg.instantiate()'
 ```
 
-- 各トピックが独立した `Project.toml` を持つ構成
-- fork した自分のリポなので、改善結果を commit & push できる
+- ここでの前提は、自分のコードを自分の Git リポジトリで管理していることである
+- 改善結果はそのまま commit & push できる
 
 === 2. ベンチマークを実行
 
@@ -95,7 +93,7 @@ julia --project=. bench.jl
 + *計測*：`bench.jl` を実行して現状の実行時間を記録する
 + *相談*：`estimate_pi.jl` のコードと計測結果を LLM に見せて、改善案をもらう
 + *修正と再計測*：提案を適用し、`bench.jl` を再実行して比較する
-+ *記録*：改善できたら commit & push（fork した自分のリポに反映される）
++ *記録*：改善できたら commit & push する
 
 === LLM への相談例
 

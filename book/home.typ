@@ -60,4 +60,3 @@ LLM（GitHub Copilot など）を *相棒* にしながら Julia プログラミ
 == リンク
 
 - 講義ノートのソースコード：#link("https://github.com/shinaoka/julia_spring_school_2026")[GitHub リポジトリ]
-- サンプルコード（受講者が fork して使う）：#link("https://github.com/shinaoka/julia_spring_school_2026_sample")[サンプルリポジトリ]
