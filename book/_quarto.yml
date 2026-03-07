@@ -4,7 +4,7 @@ project:
 
 book:
   title: "B-1. 計算物理学のための Julia 入門"
-  author: "金賀 穂、品岡 寛"
+  author: "品岡 寛"
   chapters:
     - index.qmd
     - prerequisites.qmd

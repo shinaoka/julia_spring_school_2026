@@ -6,9 +6,9 @@ title: "B-1. 計算物理学のための Julia 入門"
 
 ## 講師
 
-- 金賀 穂（千葉大学）
-- 品岡 寛（埼玉大学 大学院理工学研究科）
-  - GitHub: [shinaoka](https://github.com/shinaoka)
+品岡 寛（埼玉大学 大学院理工学研究科）
+
+- GitHub: [shinaoka](https://github.com/shinaoka)
   - 研究開発: 計算物理、量子多体系、物性物理、研究用OSSの実装
   - 代表的OSS: `SparseIR.jl`（Julia）、`sparse-ir`（Python）、`TensorCrossInterpolation.jl` など
   - 使用言語: Julia, Python, Rust, C++/C, Fortran, ...
