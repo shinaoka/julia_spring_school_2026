@@ -1,0 +1,239 @@
+---
+title: "Step 8: 発展: allocation とメモリアクセス順"
+---
+
+このステップは発展内容である。Step 5 の規律あるベンチマークに慣れた後で、速度に効く「メモリの話」を2つに分けて整理する。
+
+- 前半: 何を確保しているか。allocation と GC の話
+- 後半: どう読むか。column major と cache locality の話
+
+この2つはどちらも性能に効くが、同じ話ではない。ここでは意識して分けて扱う。
+
+## 目的
+
+Julia で性能を見るときに、まず allocation と GC を確認する習慣をつける。次に、配列の格納順とアクセス順が速度に効くことを、自作の `mul!` を通じて理解する。
+
+## 到達目標
+
+このステップの終わりまでに、以下ができていること:
+
+- allocation が増えると遅くなりやすい理由を説明できる
+- GC が allocation と結びついていることを説明できる
+- Julia の `Matrix` が column major であることを説明できる
+- access order と cache locality の関係を説明できる
+- 自作 `mul!` で、ループ順によって速度が変わる理由を説明できる
+
+::: {.callout-note}
+## この step で何を教えるか
+
+この step では `stack vs heap` を主題にしない。Julia では配置や最適化はコンパイラにも依存する。初学者にとってまず重要なのは、「不要な allocation を増やさないこと」と「配列を連続アクセスすること」である。
+:::
+
+## 実行スペル
+
+```text
+Julia の配列性能について学びたい。
+
+以下を2つの段階に分けて示せ。
+
+第1部:
+- allocation が増えると何が起こるか
+- GC と allocation がどう関係するか
+- `.=` のようなインプレース更新が何に効くか
+
+第2部:
+- Julia の `Matrix` が column major であること
+- 自作の `mul!` を2通りのループ順で書き、
+  access order による速度差を BenchmarkTools で比較すること
+
+コードは最小限で読みやすくせよ。
+`stack vs heap` を主題にせず、allocation、GC、cache locality、
+column major access に焦点を当てよ。
+```
+
+## 説明スペル
+
+```text
+今見た実験を説明せよ。
+
+第1部では:
+- どこで allocation が起きているか
+- なぜ allocation が増えると GC の負担も増えうるのか
+- `.=` がなぜ役立つのか
+
+第2部では:
+- Julia の `Matrix` でどの添字方向が連続しているか
+- 自作 `mul!` のどのループ順が column major access に向いているか
+- なぜ同じ O(N^3) でも速度差が出るのか
+
+を順に説明せよ。
+```
+
+## 習得する概念
+
+- allocation
+- GC
+- インプレース更新
+- column major storage
+- access order
+- cache locality
+- `BenchmarkTools`
+- 自作 `mul!`
+
+## GC とは何か
+
+Julia では、不要になったオブジェクトや配列のうち、主に heap 上に確保されたものを GC が後で回収する。したがって、allocation が増えると、後で GC が追跡し回収する対象も増えやすい。
+
+ここでのポイントは単純である。
+
+- GC 自体は必要な仕組みである
+- しかし hot loop で不要な allocation を増やすと、性能が悪化しやすい
+- この step では GC の内部実装ではなく、「allocation を減らすと実行時間と揺れが改善しやすい」という実践を見る
+
+## 第1部: allocation と GC
+
+最初に見るべきことは、「このコードは何を新しく確保しているか」である。新しい配列やオブジェクトを何度も作ると、確保のコストだけでなく、後で GC が回収する仕事も増えやすい。
+
+```julia
+using BenchmarkTools
+
+x = rand(10^6)
+y = rand(10^6)
+z = similar(x)
+
+@btime $x .+ $y
+@btime $z .= $x .+ $y
+```
+
+前者は新しい配列を返す。後者は既存の `z` に書き込む。broadcast は融合されるので、`.=` を使うと余分な一時配列を避けやすい。
+
+ここで重要なのは、「GC が悪者」ということではない。GC は必要な仕組みである。ただし、inner loop のたびに新しい配列を作るようなコードは、GC の仕事を自分で増やしてしまう。
+
+### 何を見ればよいか
+
+- 実行時間
+- allocation 回数
+- 確保したバイト数
+
+`@btime` は時間だけでなく allocation も出すので、Step 5 の延長として非常に有用である。
+
+## 第2部: メモリアクセス順
+
+次に、「何を確保するか」ではなく、「どう読むか」を見る。Julia の `Matrix` は column major なので、`A[1,1]`, `A[2,1]`, `A[3,1]`, ... のように第1添字方向が連続している。
+
+したがって、内側ループで第1添字を動かすコードは連続アクセスになりやすく、cache locality の点で有利であることが多い。
+
+## 自作 `mul!` の比較
+
+同じ行列積 `C = A * B` を、自作の `mul!` で2通りに書いて比べる。
+
+```julia
+using BenchmarkTools
+
+function mymul_bad_access!(C, A, B)
+    fill!(C, 0.0)
+    @inbounds for i in axes(A, 1), j in axes(B, 2), k in axes(A, 2)
+        C[i, j] += A[i, k] * B[k, j]
+    end
+    return C
+end
+
+function mymul_good_access!(C, A, B)
+    fill!(C, 0.0)
+    @inbounds for j in axes(B, 2), k in axes(A, 2), i in axes(A, 1)
+        C[i, j] += A[i, k] * B[k, j]
+    end
+    return C
+end
+
+A = rand(Float64, 256, 256)
+B = rand(Float64, 256, 256)
+C1 = zeros(size(A, 1), size(B, 2))
+C2 = similar(C1)
+
+mymul_bad_access!(C1, A, B)
+mymul_good_access!(C2, A, B)
+isapprox(C1, C2)
+
+@btime mymul_bad_access!($C1, $A, $B)
+@btime mymul_good_access!($C2, $A, $B)
+```
+
+両者は同じ `O(N^3)` の計算をしている。違いは、内側ループでどの添字を動かしているかである。
+
+- `mymul_bad_access!` では、内側ループが `k`
+- `mymul_good_access!` では、内側ループが `i`
+
+`mymul_good_access!` では、`A[i, k]` と `C[i, j]` の第1添字が内側で連続して動くため、column major の格納順に合いやすい。その結果、同じ数の浮動小数点演算でも速くなりやすい。
+
+## cache locality とは何か
+
+CPU はメモリを1要素ずつ取りに行くのではなく、近くのデータをまとめて cache に持ってくる。したがって、すでに持ってきた近傍を順に使うコードは有利である。
+
+- 連続アクセスは cache に優しい
+- 飛び飛びアクセスは cache miss を増やしやすい
+- 大きな配列では、この差がはっきり出やすい
+
+重要なのは、「ループが多いから遅い」ではない。同じ三重ループでも、**どの順序で配列を触るか**で速度が変わる。
+
+## BLAS との関係
+
+ここでは自作 `mul!` を書いて access order の差を観察した。しかし実際の `A * B` は、通常はもっと高度に最適化された BLAS カーネルを使う。したがって、本物の行列積は自作コードよりずっと速いことが多い。
+
+この step の目的は BLAS の内部実装を学ぶことではない。自作 `mul!` を通じて、**なぜ access order が重要か**を自分の目で確認することである。
+
+## 何を確認すべきか
+
+AI に以下の点を確認させるとよい:
+
+- hot loop の中で不要な allocation が起きていないか？
+- `@btime` の allocation 件数はどうなっているか？
+- Julia の `Matrix` で連続しているのはどの添字方向か？
+- 自作 `mul!` の内側ループはどの添字を動かしているか？
+- その順序は column major access と整合しているか？
+- 計算量ではなく access order が差を生んでいることを説明できるか？
+
+## コードリーディング確認
+
+以下を読め:
+
+```julia
+@btime $x .+ $y
+@btime $z .= $x .+ $y
+
+@btime mymul_bad_access!($C1, $A, $B)
+@btime mymul_good_access!($C2, $A, $B)
+```
+
+以下の質問に答えよ:
+
+1. `$x .+ $y` と `$z .= $x .+ $y` では、どちらが新しい配列を返すか？
+2. allocation が増えると、なぜ GC の負担も増えやすいのか？
+3. Julia の `Matrix` では、どの添字方向が連続しているか？
+4. `mymul_good_access!` の方が速くなりやすいのはなぜか？
+5. この速度差は、計算量の違いではなく何の違いから来ているか？
+
+## 追加テスト生成プロンプト
+
+```text
+Julia の allocation、GC、column major、cache locality、
+自作 `mul!` の access order について、
+短いコードリーディング問題を3つ作成せよ。
+
+以下に焦点を当てよ:
+- どこで allocation が起きるか
+- `.=` がなぜ役立つか
+- 自作 `mul!` のループ順でなぜ速度が変わるか
+
+まだ答えは出すな。
+私が答えた後、回答を採点し、フォローアップ質問を1つ出せ。
+```
+
+## スキップ条件
+
+以下がすでにできるなら、このステップはスキップできる:
+
+- allocation を減らすと何が嬉しいかを説明できる
+- GC と allocation の関係を説明できる
+- Julia の `Matrix` が column major であることを説明できる
+- 自作 `mul!` で、access order が速度に効く理由を説明できる

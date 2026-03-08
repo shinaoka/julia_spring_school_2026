@@ -14,6 +14,7 @@ project:
     - step-5-performance.qmd
     - step-6-package.qmd
     - step-7-phase-transition.qmd
+    - step-8-memory-layout.qmd
 
 book:
   title: "B-1. 計算物理学のための Julia 入門"
@@ -30,6 +31,7 @@ book:
     - step-5-performance.qmd
     - step-6-package.qmd
     - step-7-phase-transition.qmd
+    - step-8-memory-layout.qmd
 
 format:
   html:

@@ -1,11 +1,12 @@
 ## 計算物理 春の学校 2026 — Julia入門
 
-Typst で書いた講義ノートを shiroa で HTML 化して公開するリポジトリである（章立ては題材ベース）。
+Quarto で書いた講義ノートを HTML 化して公開するリポジトリである。
 
 ### 目次
 
 - 公開用 HTML は GitHub Pages（GitHub Actions）でデプロイする
 - ローカルでは `make serve` / `make build` で確認できる
+- 正本の原稿は `book/*.qmd` である
 
 ### 取得方法
 
