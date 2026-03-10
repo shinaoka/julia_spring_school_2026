@@ -4,7 +4,9 @@ project:
   post-render: scripts/render_setup_pages.sh
   render:
     - index.qmd
+    - course-goals.qmd
     - prerequisites.qmd
+    - ai-and-development.qmd
     - step-0_5-julia-syntax.qmd
     - step-0-environment.qmd
     - step-1-lattice.qmd
@@ -21,7 +23,9 @@ book:
   author: "品岡 寛"
   chapters:
     - index.qmd
+    - course-goals.qmd
     - prerequisites.qmd
+    - ai-and-development.qmd
     - step-0_5-julia-syntax.qmd
     - step-0-environment.qmd
     - step-1-lattice.qmd

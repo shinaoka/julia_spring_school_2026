@@ -4,7 +4,7 @@ sidebar: false
 page-navigation: false
 ---
 
-[前提条件と目標に戻る](prerequisites.qmd)
+[前提条件に戻る](prerequisites.qmd)
 
 このページは補助資料である。OpenCode をこの講義で使うための導入手順をまとめる。
 
@@ -28,4 +28,4 @@ Windows ユーザーは、Codex CLI / Claude Code / OpenCode については WSL
 OpenCode + [z.ai](https://z.ai) の coding プラン（月額 ~$30）は安くはないが、トークン上限が大きく快適に使える。
 :::
 
-[前提条件と目標に戻る](prerequisites.qmd)
+[前提条件に戻る](prerequisites.qmd)

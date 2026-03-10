@@ -1,33 +1,8 @@
 ---
-title: "前提条件と目標"
+title: "前提条件"
 ---
 
-このページは講義のハブである。最初に講義の狙いを確認し、その後で必要な前提条件と、利用する AI ツールの選び方を整理する。
-
-## この講義で目指すこと
-
-### LLM 時代にコーディングを学ぶ理由
-
-LLM がコードを書けるようになっても、その出力を評価し、良い指示を出すためには**抽象化と構造**の理解が必要である。この講義は、すべてを手で書くことを目的としていない。LLM と協力しながらコードを読み、形作る能力を身につけることが目的である。
-
-### 具体的な目標
-
-- AI コーディングツール（VS Code Copilot、Cursor、Codex CLI、Claude Code など）を Julia コードの作業パートナーとして使う
-- 関数、型、ブロードキャストなどの Julia の抽象化が何の役に立つかを体験する
-- GitHub とプロジェクト環境に基づくモダンなワークフローの入口を学ぶ
-
-## AI コーディングツールの世代
-
-AI を使ったコーディングには、大きく3つの世代がある。
-
-|  | **Generation 0** | **Generation 1** | **Generation 2** |
-|---|---|---|---|
-| **ツール** | ChatGPT 等のチャット | Cursor, VS Code Copilot | Claude Code, Codex CLI, OpenCode, ... |
-| **スタイル** | AI の出力をコピペ | エディタで AI の提案を読む | AI が自律的に作業し、人間は目標を設定 |
-| **コードの読み方** | 人間がコピペして動作確認 | 人間が生成コードを読む | 人間がコードを読むことは少ない |
-| **向いている用途** | 質問、スニペット生成 | 論文執筆、軽い編集 | **コーディング — 現在の主戦場** |
-
-この講義では **Generation 1 または 2 のツール**を使う。Generation 2 では AI エージェントがファイルの作成・編集・コマンド実行を自律的に行い、受講者はゴールを設定し、結果を検証する役割となる。
+このページでは、受講前に揃えておくべき環境とツールをまとめる。講義の目標は [講義の目標](course-goals.qmd) で述べる。
 
 ## 前提条件
 
@@ -35,13 +10,15 @@ AI を使ったコーディングには、大きく3つの世代がある。
 - GitHub アカウント、できれば GitHub Student Developer Pack
 - GitHub CLI（`gh`）のインストールと認証
   - 参考: <https://docs.github.com/ja/github-cli/github-cli/about-github-cli>
-  - インストール後、認証を完了すること:
+  - インストール後、SSH を使う設定で認証を完了すること:
 
 ```sh
 gh auth login
-# 対話形式で GitHub.com -> HTTPS -> ブラウザ認証を選択
+# 対話形式で GitHub.com -> SSH -> ブラウザ認証を選択
 gh auth status   # 認証が成功したか確認
 ```
+
+  - この講義では、GitHub との接続は HTTPS ではなく SSH を標準とする。
 
 - Julia のインストール（`juliaup` 推奨）
   - `juliaup` を使えば、Julia のインストールとバージョン管理を一箇所で行える
@@ -68,11 +45,11 @@ julia --version
   - VS Code: <https://code.visualstudio.com/>
   - Julia 拡張（Julia Language Support）: <https://marketplace.visualstudio.com/items?itemName=julialang.language-julia>
 
-## AI ツールの選び方
+## AI ツールのセットアップ
 
-以下のいずれか1つをセットアップすればよい。詳細な手順は個別ページへ分離してあるので、自分が使うツールだけ読めば十分である。
+この講義では、エディタ型と自律型 CLI のどちらを使ってもよい。ここでは、自分が使うものを 1 つセットアップすれば十分である。講義中の進め方や使い分けは [良い AI 開発と悪い AI 開発](ai-and-development.qmd) で補う。
 
-### Generation 1 ツール（推奨）
+### エディタ型ツール（推奨）
 
 エディタ内で AI と対話しながらコードを書くスタイルである。初学者にはこちらが取り組みやすいだろう。
 
@@ -85,7 +62,7 @@ julia --version
 Cursor の無料版（Hobby プラン）にはエージェント機能がない。この講義で使うには **Pro プラン**が必要である。
 :::
 
-### Generation 2 ツール
+### 自律型 CLI ツール
 
 AI が自律的にファイル操作やコマンド実行を行うスタイルである。慣れれば非常に強力である。
 
@@ -116,7 +93,3 @@ julia -e 'using Pkg; Pkg.add(["BenchmarkTools", "Plots", "Test"])'
 - `BenchmarkTools`: パフォーマンス計測に使用（Step 5）
 - `Plots`: プロットに使用（Step 7）
 - `Test`: テストに使用（Step 6）
-
-## オープニングクエスチョン
-
-**LLM と一緒にコードを書けるとは、実際にはどういうことだろうか？**

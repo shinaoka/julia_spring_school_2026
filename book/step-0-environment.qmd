@@ -37,7 +37,10 @@ GitHub CLI の認証がまだの場合は、先に以下を実行する:
 
 ```bash
 gh auth login
+# 対話形式で GitHub.com -> SSH -> ブラウザ認証を選択
 ```
+
+この講義では、GitHub との接続は HTTPS ではなく SSH を標準とする。
 
 ## 習得する概念
 

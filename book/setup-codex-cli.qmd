@@ -4,7 +4,7 @@ sidebar: false
 page-navigation: false
 ---
 
-[前提条件と目標に戻る](prerequisites.qmd)
+[前提条件に戻る](prerequisites.qmd)
 
 このページは補助資料である。Codex CLI をこの講義で使うための導入手順をまとめる。
 
@@ -25,4 +25,4 @@ codex --login
 - IDE 連携の詳細は公式ドキュメントを参照するとよい
 - 公式ドキュメント: <https://developers.openai.com/codex/ide/>
 
-[前提条件と目標に戻る](prerequisites.qmd)
+[前提条件に戻る](prerequisites.qmd)
